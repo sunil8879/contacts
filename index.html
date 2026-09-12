@@ -6252,32 +6252,25 @@ loadUniversities();
 
 <script>
 /* =========================================================
-   UNIVERSITY IMAGE ACCURACY FIX
+   UNIVERSITY-ONLY PHOTO FIX
    ---------------------------------------------------------
-   ADD ONLY - DO NOT CHANGE EXISTING CODE
-
-   PURPOSE:
-   - Prevent unrelated/odd images from being displayed
-   - Accept an image only when Wikimedia strongly matches
-     the selected university
-   - If no reliable university image exists, show the
-     existing placeholder instead
-   - Does NOT alter the page layout or university data
+   ADD ONLY BEFORE </body>
+   Uses the university's Wikipedia page image ONLY when
+   the university itself is matched.
+   No random Wikimedia search images.
 ========================================================= */
 
 (function () {
 
     "use strict";
 
+    let imageRequest = 0;
 
-    /* ---------------------------------------------------------
-       NORMALIZE UNIVERSITY NAME
-    --------------------------------------------------------- */
-    function imageNormalize(text) {
+    function cleanUniversityName(name) {
 
-        return String(text || "")
+        return String(name || "")
             .toLowerCase()
-            .replace(/&/g, " and ")
+            .replace(/&/g, "and")
             .replace(/[^\w\s]/g, " ")
             .replace(/\s+/g, " ")
             .trim();
@@ -6285,695 +6278,341 @@ loadUniversities();
     }
 
 
-    /* ---------------------------------------------------------
-       WORDS WHICH MUST NEVER BE ACCEPTED
-    --------------------------------------------------------- */
-    const imageBadWords = [
+    function showUniversityPhoto(url, name, requestId) {
 
-        "logo",
-        "logos",
-        "icon",
-        "icons",
-        "emblem",
-        "seal",
-        "flag",
-        "flags",
-        "coat of arms",
-        "symbol",
-        "favicon",
-        "portrait",
-        "headshot",
-        "avatar",
-        "person",
-        "professor",
-        "student",
-        "students",
-        "alumni",
-        "football",
-        "basketball",
-        "soccer",
-        "team",
-        "athlete",
-        "stadium",
-        "event",
-        "ceremony",
-        "graduation",
-        "wedding",
-        "conference",
-        "protest",
-        "politician",
-        "personnel"
+        if (requestId !== imageRequest) return;
 
-    ];
+        const img =
+            document.getElementById("universityImage");
 
+        const placeholder =
+            document.getElementById("imagePlaceholder");
 
-    /* ---------------------------------------------------------
-       GET IMPORTANT UNIVERSITY WORDS
-       --------------------------------------------------------- */
-    function getImportantWords(name) {
+        if (!img || !placeholder || !url) return;
 
-        const ignored = new Set([
+        img.onload = function () {
 
-            "the",
-            "of",
-            "and",
-            "for",
-            "at",
-            "in",
-            "on",
-            "to",
-            "a",
-            "an",
-            "university",
-            "universities",
-            "college",
-            "school",
-            "institute",
-            "institution"
+            if (requestId !== imageRequest) return;
 
-        ]);
+            /* Reject tiny/non-photo results */
+            if (
+                this.naturalWidth < 500 ||
+                this.naturalHeight < 300
+            ) {
+                this.removeAttribute("src");
+                this.style.display = "none";
+                placeholder.style.display = "block";
+                return;
+            }
 
-        return imageNormalize(name)
-            .split(/\s+/)
-            .filter(function (word) {
+            this.alt =
+                name + " university campus";
 
-                return (
-                    word.length >= 4 &&
-                    !ignored.has(word)
-                );
+            this.style.display = "block";
+            placeholder.style.display = "none";
 
-            });
+        };
+
+        img.onerror = function () {
+
+            if (requestId !== imageRequest) return;
+
+            this.removeAttribute("src");
+            this.style.display = "none";
+            placeholder.style.display = "block";
+
+        };
+
+        img.src = url;
 
     }
 
 
-    /* ---------------------------------------------------------
-       CHECK WHETHER IMAGE TITLE REALLY MATCHES UNIVERSITY
-    --------------------------------------------------------- */
-    function isReliableUniversityImage(
-        title,
-        universityName
-    ) {
+    function hideUniversityPhoto() {
 
-        const cleanTitle =
-            imageNormalize(title);
+        const img =
+            document.getElementById("universityImage");
 
-        const cleanName =
-            imageNormalize(universityName);
+        const placeholder =
+            document.getElementById("imagePlaceholder");
 
-        if (
-            !cleanTitle ||
-            !cleanName
-        ) {
-            return false;
-        }
+        if (!img || !placeholder) return;
 
+        img.onload = null;
+        img.onerror = null;
 
-        /* Never accept obviously wrong image categories */
+        img.removeAttribute("src");
 
-        for (
-            const badWord
-            of imageBadWords
-        ) {
-
-            if (
-                cleanTitle.includes(
-                    imageNormalize(badWord)
-                )
-            ) {
-
-                return false;
-
-            }
-
-        }
-
-
-        const importantWords =
-            getImportantWords(
-                universityName
-            );
-
-
-        if (
-            !importantWords.length
-        ) {
-            return false;
-        }
-
-
-        /*
-         * Strongest condition:
-         * the complete university name occurs
-         * in the Wikimedia title.
-         */
-        if (
-            cleanTitle.includes(
-                cleanName
-            )
-        ) {
-
-            return true;
-
-        }
-
-
-        /*
-         * Count distinctive university words.
-         */
-        let matched = 0;
-
-        for (
-            const word
-            of importantWords
-        ) {
-
-            if (
-                cleanTitle.includes(word)
-            ) {
-
-                matched++;
-
-            }
-
-        }
-
-
-        /*
-         * For universities with several distinctive
-         * words, require at least two.
-         */
-        if (
-            importantWords.length >= 2
-        ) {
-
-            return matched >= 2;
-
-        }
-
-
-        /*
-         * For a university name having only one
-         * distinctive word, require that word plus
-         * a university/campus/building context.
-         */
-        if (
-            matched === 1 &&
-            (
-                cleanTitle.includes("campus") ||
-                cleanTitle.includes("building") ||
-                cleanTitle.includes("university") ||
-                cleanTitle.includes("college") ||
-                cleanTitle.includes("faculty") ||
-                cleanTitle.includes("library") ||
-                cleanTitle.includes("hall")
-            )
-        ) {
-
-            return true;
-
-        }
-
-
-        return false;
+        img.style.display = "none";
+        placeholder.style.display = "block";
 
     }
 
 
-    /* ---------------------------------------------------------
-       SEARCH WIKIMEDIA
-       --------------------------------------------------------- */
-    async function accurateWikimediaSearch(
-        universityName,
-        city,
-        country
+    /*
+     * Find the university's actual Wikipedia page.
+     * We do NOT use a general Wikimedia image search.
+     */
+    async function getExactUniversityPhoto(
+        university,
+        requestId
     ) {
 
-        const queries = [
+        const name =
+            String(
+                university.name || ""
+            ).trim();
 
-            `"${universityName}" campus`,
-            `"${universityName}" university`,
-            `"${universityName}" building`,
-            `${universityName} ${city} campus`,
-            `${universityName} ${country} campus`
+        if (!name) return null;
 
-        ];
+        const searchName =
+            cleanUniversityName(name);
 
+        try {
 
-        for (
-            const query
-            of queries
-        ) {
+            /*
+             * First try Wikipedia's exact REST page.
+             */
+            const exactURL =
+                "https://en.wikipedia.org/api/rest_v1/page/summary/" +
+                encodeURIComponent(name.replace(/ /g, "_"));
 
-            try {
+            const exactResponse =
+                await fetch(exactURL);
 
-                const url =
-                    "https://commons.wikimedia.org/w/api.php" +
-                    "?action=query" +
-                    "&generator=search" +
-                    "&gsrsearch=" +
-                    encodeURIComponent(query) +
-                    "&gsrnamespace=6" +
-                    "&gsrlimit=20" +
-                    "&prop=imageinfo" +
-                    "&iiprop=url|mime|size" +
-                    "&iiurlwidth=1000" +
-                    "&format=json" +
-                    "&origin=*";
+            if (
+                exactResponse.ok
+            ) {
 
-
-                const response =
-                    await fetch(url);
-
+                const exactData =
+                    await exactResponse.json();
 
                 if (
-                    !response.ok
-                ) {
-                    continue;
-                }
-
-
-                const data =
-                    await response.json();
-
-
-                if (
-                    !data.query ||
-                    !data.query.pages
-                ) {
-                    continue;
-                }
-
-
-                const pages =
-                    Object.values(
-                        data.query.pages
-                    );
-
-
-                const candidates = [];
-
-
-                for (
-                    const page
-                    of pages
+                    exactData &&
+                    exactData.originalimage &&
+                    exactData.originalimage.source
                 ) {
 
-                    if (
-                        !page ||
-                        !page.imageinfo ||
-                        !page.imageinfo[0]
-                    ) {
-                        continue;
-                    }
-
-
-                    const info =
-                        page.imageinfo[0];
-
-
-                    const imageURL =
-                        info.thumburl ||
-                        info.url;
-
-
-                    if (
-                        !imageURL
-                    ) {
-                        continue;
-                    }
-
-
-                    const title =
-                        String(
-                            page.title || ""
+                    const pageTitle =
+                        cleanUniversityName(
+                            exactData.title || ""
                         );
-
-
-                    if (
-                        !isReliableUniversityImage(
-                            title,
-                            universityName
-                        )
-                    ) {
-                        continue;
-                    }
-
 
                     /*
-                     * Prefer photographs over unusual
-                     * file types.
+                     * Require the university name to be
+                     * represented by the Wikipedia page.
                      */
-                    const mime =
-                        String(
-                            info.mime || ""
-                        ).toLowerCase();
-
-
-                    if (
-                        mime &&
-                        !mime.startsWith("image/")
-                    ) {
-                        continue;
-                    }
-
-
-                    let score = 0;
-
-                    const lowerTitle =
-                        imageNormalize(title);
-
-
                     const importantWords =
-                        getImportantWords(
-                            universityName
-                        );
+                        searchName
+                            .split(" ")
+                            .filter(function (w) {
+                                return (
+                                    w.length >= 4 &&
+                                    w !== "university" &&
+                                    w !== "college" &&
+                                    w !== "school" &&
+                                    w !== "institute"
+                                );
+                            });
 
+                    let matches = 0;
 
-                    for (
-                        const word
-                        of importantWords
-                    ) {
+                    importantWords.forEach(function (word) {
 
                         if (
-                            lowerTitle.includes(word)
+                            pageTitle.includes(word)
                         ) {
-
-                            score += 20;
-
+                            matches++;
                         }
-
-                    }
-
-
-                    if (
-                        lowerTitle.includes("campus")
-                    ) {
-                        score += 30;
-                    }
-
-
-                    if (
-                        lowerTitle.includes("building")
-                    ) {
-                        score += 25;
-                    }
-
-
-                    if (
-                        lowerTitle.includes("university")
-                    ) {
-                        score += 15;
-                    }
-
-
-                    if (
-                        lowerTitle.includes("library")
-                    ) {
-                        score += 10;
-                    }
-
-
-                    /*
-                     * Penalize files which are technically
-                     * images but unlikely to be useful
-                     * university photographs.
-                     */
-                    if (
-                        lowerTitle.includes("map")
-                    ) {
-                        score -= 50;
-                    }
-
-
-                    if (
-                        lowerTitle.includes("diagram")
-                    ) {
-                        score -= 50;
-                    }
-
-
-                    if (
-                        lowerTitle.includes("plan")
-                    ) {
-                        score -= 40;
-                    }
-
-
-                    if (
-                        lowerTitle.includes("drawing")
-                    ) {
-                        score -= 30;
-                    }
-
-
-                    candidates.push({
-
-                        url: imageURL,
-                        score: score
 
                     });
 
-                }
-
-
-                if (
-                    candidates.length
-                ) {
-
-                    candidates.sort(
-                        function (a, b) {
-
-                            return (
-                                b.score -
-                                a.score
-                            );
-
-                        }
-                    );
-
-
-                    /*
-                     * Verify that the image can actually
-                     * be loaded before displaying it.
-                     */
-                    for (
-                        const candidate
-                        of candidates
+                    if (
+                        importantWords.length === 0 ||
+                        matches >= Math.max(
+                            1,
+                            Math.ceil(
+                                importantWords.length * 0.5
+                            )
+                        )
                     ) {
 
-                        const valid =
-                            await verifyImage(
-                                candidate.url
-                            );
-
-
-                        if (valid) {
-
-                            return candidate.url;
-
-                        }
+                        return exactData.originalimage.source;
 
                     }
 
                 }
 
             }
-            catch (error) {
 
-                console.warn(
-                    "University image search failed:",
-                    error
+
+            /*
+             * If the exact title did not work, use Wikipedia
+             * search, but accept ONLY a very strong university
+             * page match.
+             */
+            const searchURL =
+                "https://en.wikipedia.org/w/api.php" +
+                "?action=query" +
+                "&list=search" +
+                "&srsearch=" +
+                encodeURIComponent(
+                    name + " university"
+                ) +
+                "&srlimit=8" +
+                "&format=json" +
+                "&origin=*";
+
+            const response =
+                await fetch(searchURL);
+
+            if (!response.ok) return null;
+
+            const data =
+                await response.json();
+
+            if (
+                !data.query ||
+                !data.query.search
+            ) {
+                return null;
+            }
+
+
+            const importantWords =
+                searchName
+                    .split(" ")
+                    .filter(function (w) {
+
+                        return (
+                            w.length >= 4 &&
+                            w !== "university" &&
+                            w !== "college" &&
+                            w !== "school" &&
+                            w !== "institute"
+                        );
+
+                    });
+
+
+            let bestTitle = null;
+            let bestScore = 0;
+
+
+            data.query.search.forEach(function (result) {
+
+                const title =
+                    cleanUniversityName(
+                        result.title
+                    );
+
+                let score = 0;
+
+                importantWords.forEach(function (word) {
+
+                    if (
+                        title.includes(word)
+                    ) {
+                        score++;
+                    }
+
+                });
+
+
+                /*
+                 * Strong bonus when "university" is actually
+                 * present in the Wikipedia title.
+                 */
+                if (
+                    title.includes("university")
+                ) {
+                    score += 1;
+                }
+
+
+                if (
+                    score > bestScore
+                ) {
+
+                    bestScore = score;
+                    bestTitle = result.title;
+
+                }
+
+            });
+
+
+            /*
+             * Do not guess.
+             */
+            if (
+                !bestTitle ||
+                bestScore <
+                Math.max(
+                    2,
+                    Math.ceil(
+                        importantWords.length * 0.6
+                    )
+                )
+            ) {
+                return null;
+            }
+
+
+            const pageURL =
+                "https://en.wikipedia.org/api/rest_v1/page/summary/" +
+                encodeURIComponent(
+                    bestTitle.replace(/ /g, "_")
                 );
+
+
+            const pageResponse =
+                await fetch(pageURL);
+
+            if (!pageResponse.ok) return null;
+
+            const pageData =
+                await pageResponse.json();
+
+
+            if (
+                pageData &&
+                pageData.originalimage &&
+                pageData.originalimage.source
+            ) {
+
+                return pageData.originalimage.source;
 
             }
 
         }
+        catch (error) {
 
+            console.warn(
+                "University photo lookup failed:",
+                error
+            );
+
+        }
 
         return null;
 
     }
 
 
-    /* ---------------------------------------------------------
-       VERIFY IMAGE URL
-       --------------------------------------------------------- */
-    function verifyImage(url) {
-
-        return new Promise(
-            function (resolve) {
-
-                const test =
-                    new Image();
-
-                let finished = false;
-
-
-                const finish =
-                    function (result) {
-
-                        if (finished) {
-                            return;
-                        }
-
-                        finished = true;
-
-                        resolve(result);
-
-                    };
-
-
-                test.onload =
-                    function () {
-
-                        /*
-                         * Reject extremely small images.
-                         */
-                        if (
-                            test.naturalWidth < 300 ||
-                            test.naturalHeight < 200
-                        ) {
-
-                            finish(false);
-                            return;
-
-                        }
-
-
-                        finish(true);
-
-                    };
-
-
-                test.onerror =
-                    function () {
-
-                        finish(false);
-
-                    };
-
-
-                setTimeout(
-                    function () {
-
-                        finish(false);
-
-                    },
-                    7000
-                );
-
-
-                test.src = url;
-
-            }
-        );
-
-    }
-
-
-    /* ---------------------------------------------------------
-       SAFE IMAGE DISPLAY
-       --------------------------------------------------------- */
-    function displayAccurateImage(
-        imageURL,
-        universityName
-    ) {
-
-        const image =
-            document.getElementById(
-                "universityImage"
-            );
-
-
-        const placeholder =
-            document.getElementById(
-                "imagePlaceholder"
-            );
-
-
-        if (
-            !image ||
-            !placeholder
-        ) {
-            return;
-        }
-
-
-        image.onload =
-            function () {
-
-                /*
-                 * Double-check the loaded image.
-                 */
-                if (
-                    image.naturalWidth < 300 ||
-                    image.naturalHeight < 200
-                ) {
-
-                    image.removeAttribute("src");
-
-                    image.style.display =
-                        "none";
-
-                    placeholder.style.display =
-                        "block";
-
-                    return;
-
-                }
-
-
-                image.style.display =
-                    "block";
-
-                placeholder.style.display =
-                    "none";
-
-            };
-
-
-        image.onerror =
-            function () {
-
-                image.removeAttribute(
-                    "src"
-                );
-
-                image.style.display =
-                    "none";
-
-                placeholder.style.display =
-                    "block";
-
-            };
-
-
-        image.alt =
-            universityName +
-            " university photograph";
-
-
-        image.src =
-            imageURL;
-
-    }
-
-
-    /* ---------------------------------------------------------
-       REPLACE EXISTING IMAGE SEARCH
-       --------------------------------------------------------- */
+    /*
+     * Replace the existing image-search function.
+     */
     window.findUniversityImage =
     findUniversityImage =
-    async function (
-        university
-    ) {
+    async function (university) {
 
-        if (
-            !university
-        ) {
-            return;
-        }
+        const requestId =
+            ++imageRequest;
+
+        hideUniversityPhoto();
+
+        if (!university) return;
 
 
         const name =
@@ -6982,100 +6621,59 @@ loadUniversities();
             ).trim();
 
 
+        if (!name) return;
+
+
+        const photo =
+            await getExactUniversityPhoto(
+                university,
+                requestId
+            );
+
+
         if (
-            !name
+            requestId !== imageRequest
         ) {
-
-            resetImage();
-
             return;
-
         }
 
 
-        const city =
-            String(
-                university.city || ""
-            ).trim();
+        if (photo) {
 
-
-        let country = "";
-
-
-        try {
-
-            if (
-                typeof getCountry ===
-                "function"
-            ) {
-
-                country =
-                    String(
-                        getCountry(
-                            university
-                        ) || ""
-                    ).trim();
-
-            }
-
-        }
-        catch (e) {
-
-            country = "";
-
-        }
-
-
-        /*
-         * Always clear the previous university image first.
-         */
-        resetImage();
-
-
-        /*
-         * Search only for a strongly matching
-         * university photograph.
-         */
-        const imageURL =
-            await accurateWikimediaSearch(
+            showUniversityPhoto(
+                photo,
                 name,
-                city,
-                country
+                requestId
             );
-
-
-        if (
-            imageURL
-        ) {
-
-            displayAccurateImage(
-                imageURL,
-                name
-            );
-
-            return;
 
         }
+        else {
 
+            /*
+             * No verified university photograph =
+             * keep the normal university placeholder.
+             */
+            hideUniversityPhoto();
 
-        /*
-         * IMPORTANT:
-         * If no reliable photograph exists,
-         * DO NOT display a random image.
-         */
-        resetImage();
-
-
-        console.log(
-            "No reliable university photograph found:",
-            name
-        );
+        }
 
     };
 
 
+    /*
+     * IMPORTANT:
+     * Prevent the OLD Wikimedia search routine from
+     * displaying unrelated images.
+     */
+    window.displayUniversityImage =
+    displayUniversityImage =
+    function () {
+        return;
+    };
+
+
     console.log(
-        "UNIVERSITY IMAGE ACCURACY FIX APPLIED"
+        "UNIVERSITY-ONLY PHOTO FIX ACTIVE"
     );
 
 })();
