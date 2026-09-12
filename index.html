@@ -4055,5 +4055,28 @@ loadUniversities();
 
 </script>
 
+
+<script>
+/* FIX FOUNDED DATE: HANDLE NaN / NULL / EMPTY VALUES */
+function getFoundedField(record) {
+    if (!record) return "Not available";
+
+    const value = record.FOUNDED;
+
+    if (
+        value === undefined ||
+        value === null ||
+        value === "" ||
+        (typeof value === "number" && Number.isNaN(value)) ||
+        String(value).trim().toLowerCase() === "nan" ||
+        String(value).trim().toLowerCase() === "null"
+    ) {
+        return "Not available";
+    }
+
+    return String(value).trim();
+}
+</script>
+
 </body>
 </html>
