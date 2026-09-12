@@ -5055,5 +5055,767 @@ loadUniversities();
 
 })();
 </script>
+
+
+
+
+
+<script>
+/* ============================================================
+   FINAL MAP FIX
+   Paste immediately before </body>
+
+   PURPOSE:
+   - Uses the address stored in WORLD_UNIVERSITIES_ECTS.json.
+   - If the full address fails, progressively tries:
+       1. exact JSON address
+       2. address + city + country
+       3. address + country
+       4. city + country
+       5. university name + city + country
+   - NEVER places a fake/default marker.
+   - Verifies that the returned location is in the expected country.
+   - Shows the ORIGINAL JSON address in the popup.
+   ============================================================ */
+
+(function () {
+
+    let mapFixRequest = 0;
+    const addressCache = new Map();
+
+    function safeText(value) {
+        return String(value || "").trim();
+    }
+
+    function escapeMapText(value) {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function normalCountry(value) {
+
+        let s = safeText(value).toLowerCase();
+
+        const aliases = {
+            "usa": "united states",
+            "u.s.a.": "united states",
+            "u.s.": "united states",
+            "us": "united states",
+            "united states of america": "united states",
+
+            "uk": "united kingdom",
+            "u.k.": "united kingdom",
+            "england": "united kingdom",
+
+            "uae": "united arab emirates",
+
+            "czechia": "czech republic",
+
+            "russian federation": "russia",
+
+            "türkiye": "turkey",
+            "turkiye": "turkey",
+
+            "viet nam": "vietnam",
+
+            "republic of korea": "south korea"
+        };
+
+        return aliases[s] || s;
+    }
+
+
+    /* ---------------------------------------------------------
+       GET COUNTRY FROM SELECTED JSON RECORD
+    --------------------------------------------------------- */
+
+    function getJsonCountry(u) {
+
+        if (!u) return "";
+
+        const fields = [
+            "country",
+            "country_name",
+            "countryName",
+            "COUNTRY",
+            "Country",
+            "nation",
+            "nation_name"
+        ];
+
+        for (const field of fields) {
+
+            if (
+                u[field] !== undefined &&
+                u[field] !== null &&
+                safeText(u[field])
+            ) {
+                return safeText(u[field]);
+            }
+        }
+
+        return "";
+    }
+
+
+    /* ---------------------------------------------------------
+       GET CITY FROM JSON
+    --------------------------------------------------------- */
+
+    function getJsonCity(u) {
+
+        if (!u) return "";
+
+        const fields = [
+            "city",
+            "CITY",
+            "City",
+            "town",
+            "Town"
+        ];
+
+        for (const field of fields) {
+
+            if (
+                u[field] !== undefined &&
+                u[field] !== null &&
+                safeText(u[field])
+            ) {
+                return safeText(u[field]);
+            }
+        }
+
+        return "";
+    }
+
+
+    /* ---------------------------------------------------------
+       GEOCODE ONE QUERY
+    --------------------------------------------------------- */
+
+    async function geocode(query) {
+
+        const key = query.toLowerCase().trim();
+
+        if (addressCache.has(key)) {
+            return addressCache.get(key);
+        }
+
+        try {
+
+            const url =
+                "https://nominatim.openstreetmap.org/search" +
+                "?format=jsonv2" +
+                "&q=" +
+                encodeURIComponent(query) +
+                "&limit=5" +
+                "&addressdetails=1" +
+                "&accept-language=en";
+
+            const response = await fetch(url, {
+                cache: "force-cache"
+            });
+
+            if (!response.ok) {
+                return [];
+            }
+
+            const data = await response.json();
+
+            if (!Array.isArray(data)) {
+                return [];
+            }
+
+            addressCache.set(key, data);
+
+            return data;
+
+        } catch (error) {
+
+            console.warn(
+                "Geocoding failed:",
+                query,
+                error
+            );
+
+            return [];
+        }
+    }
+
+
+    /* ---------------------------------------------------------
+       CHECK COUNTRY
+    --------------------------------------------------------- */
+
+    function countryMatches(result, expectedCountry) {
+
+        if (!expectedCountry) {
+            return true;
+        }
+
+        if (
+            !result ||
+            !result.address ||
+            !result.address.country
+        ) {
+            return false;
+        }
+
+        const expected =
+            normalCountry(expectedCountry);
+
+        const returned =
+            normalCountry(result.address.country);
+
+        return (
+            returned === expected ||
+            returned.includes(expected) ||
+            expected.includes(returned)
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       CHECK VALID COORDINATES
+    --------------------------------------------------------- */
+
+    function validCoordinates(result) {
+
+        if (!result) return false;
+
+        const lat = Number(result.lat);
+        const lon = Number(result.lon);
+
+        return (
+            Number.isFinite(lat) &&
+            Number.isFinite(lon) &&
+            lat >= -90 &&
+            lat <= 90 &&
+            lon >= -180 &&
+            lon <= 180
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       FIND THE BEST REAL LOCATION
+       --------------------------------------------------------- */
+
+    async function findRealLocation(university, requestID) {
+
+        const address =
+            safeText(university.address);
+
+        const city =
+            getJsonCity(university);
+
+        const country =
+            getJsonCountry(university);
+
+        const name =
+            safeText(university.name);
+
+
+        /*
+         * We deliberately try several levels because many
+         * university addresses are incomplete or formatted in
+         * ways that a geocoder cannot resolve in one attempt.
+         */
+
+        const queries = [];
+
+
+        /* 1. EXACT ADDRESS FROM JSON */
+        if (address) {
+            queries.push(address);
+        }
+
+
+        /* 2. ADDRESS + CITY + COUNTRY */
+        if (address && (city || country)) {
+
+            queries.push(
+                [
+                    address,
+                    city,
+                    country
+                ]
+                .filter(Boolean)
+                .join(", ")
+            );
+        }
+
+
+        /* 3. ADDRESS + COUNTRY */
+        if (address && country) {
+
+            queries.push(
+                address + ", " + country
+            );
+        }
+
+
+        /* 4. CITY + COUNTRY */
+        if (city && country) {
+
+            queries.push(
+                city + ", " + country
+            );
+        }
+
+
+        /* 5. UNIVERSITY + CITY + COUNTRY */
+        if (name && city && country) {
+
+            queries.push(
+                name + ", " + city + ", " + country
+            );
+        }
+
+
+        /*
+         * Remove duplicate queries.
+         */
+        const uniqueQueries = [
+            ...new Set(
+                queries
+                    .map(q => q.trim())
+                    .filter(Boolean)
+            )
+        ];
+
+
+        for (const query of uniqueQueries) {
+
+            if (requestID !== mapFixRequest) {
+                return null;
+            }
+
+            const results =
+                await geocode(query);
+
+
+            if (!results.length) {
+                continue;
+            }
+
+
+            /*
+             * First prefer a result in the correct country.
+             */
+            const countryCorrect =
+                results.filter(
+                    result =>
+                        validCoordinates(result) &&
+                        countryMatches(
+                            result,
+                            country
+                        )
+                );
+
+
+            if (countryCorrect.length) {
+
+                /*
+                 * Prefer university/education/place results.
+                 */
+                const preferred =
+                    countryCorrect.find(
+                        result => {
+
+                            const type =
+                                safeText(
+                                    result.type
+                                ).toLowerCase();
+
+                            const category =
+                                safeText(
+                                    result.category
+                                ).toLowerCase();
+
+                            return (
+                                type.includes("university") ||
+                                type.includes("college") ||
+                                type.includes("school") ||
+                                type.includes("education") ||
+                                category.includes("education")
+                            );
+                        }
+                    );
+
+                return preferred ||
+                    countryCorrect[0];
+            }
+        }
+
+
+        /*
+         * If the address could not be verified against the
+         * country, DO NOT put a potentially wrong marker.
+         */
+        return null;
+    }
+
+
+    /* ---------------------------------------------------------
+       DISPLAY REAL LOCATION
+       --------------------------------------------------------- */
+
+    function displayRealLocation(
+        result,
+        university,
+        requestID
+    ) {
+
+        if (requestID !== mapFixRequest) {
+            return;
+        }
+
+        if (!result || !validCoordinates(result)) {
+            showNotFound(university);
+            return;
+        }
+
+
+        const lat = Number(result.lat);
+        const lon = Number(result.lon);
+
+
+        /*
+         * Remove previous marker.
+         */
+        if (marker) {
+
+            try {
+                map.removeLayer(marker);
+            } catch (e) {}
+
+            marker = null;
+        }
+
+
+        /*
+         * Create marker at REAL returned coordinates.
+         */
+        marker =
+            L.marker([lat, lon])
+                .addTo(map);
+
+
+        /*
+         * IMPORTANT:
+         * The address displayed here is EXACTLY the address
+         * from WORLD_UNIVERSITIES_ECTS.json.
+         */
+        const jsonAddress =
+            safeText(university.address) ||
+            "Address not available";
+
+
+        marker.bindPopup(
+
+            '<div style="' +
+                'font-family:Arial,Helvetica,sans-serif;' +
+                'min-width:270px;' +
+                'font-size:13px;' +
+                'line-height:1.5;' +
+            '">' +
+
+                '<div style="' +
+                    'font-size:16px;' +
+                    'font-weight:800;' +
+                    'margin-bottom:10px;' +
+                '">' +
+                    escapeMapText(
+                        university.name
+                    ) +
+                '</div>' +
+
+                '<div style="' +
+                    'font-size:11px;' +
+                    'font-weight:800;' +
+                    'color:#555;' +
+                    'margin-bottom:4px;' +
+                    'text-transform:uppercase;' +
+                '">' +
+                    'Address from JSON' +
+                '</div>' +
+
+                '<div style="' +
+                    'font-size:14px;' +
+                '">' +
+                    escapeMapText(
+                        jsonAddress
+                    ) +
+                '</div>' +
+
+            '</div>'
+        );
+
+
+        /*
+         * Zoom to the actual located point.
+         */
+        map.setView(
+            [lat, lon],
+            17,
+            {
+                animate: true
+            }
+        );
+
+
+        setTimeout(
+            function () {
+
+                try {
+                    map.invalidateSize();
+                } catch (e) {}
+
+                if (marker) {
+                    marker.openPopup();
+                }
+
+            },
+            300
+        );
+
+
+        const status =
+            document.getElementById(
+                "mapStatus"
+            );
+
+        if (status) {
+
+            status.textContent =
+                "University location identified from its JSON address";
+        }
+
+
+        console.log(
+            "UNIVERSITY:",
+            university.name
+        );
+
+        console.log(
+            "JSON ADDRESS:",
+            jsonAddress
+        );
+
+        console.log(
+            "MAP LOCATION:",
+            result.display_name
+        );
+
+        console.log(
+            "COORDINATES:",
+            lat,
+            lon
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       NO REAL MATCH
+       --------------------------------------------------------- */
+
+    function showNotFound(university) {
+
+        if (marker) {
+
+            try {
+                map.removeLayer(marker);
+            } catch (e) {}
+
+            marker = null;
+        }
+
+
+        map.setView(
+            [20, 0],
+            2
+        );
+
+
+        const status =
+            document.getElementById(
+                "mapStatus"
+            );
+
+        if (status) {
+
+            status.textContent =
+                "The JSON address could not be reliably located. No incorrect marker was displayed.";
+        }
+
+
+        console.warn(
+            "NO RELIABLE MAP MATCH FOR:",
+            university.name,
+            university.address
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       MAIN FUNCTION
+       --------------------------------------------------------- */
+
+    async function correctMap() {
+
+        if (
+            !selectedUniversity ||
+            !map
+        ) {
+            return;
+        }
+
+
+        const university =
+            selectedUniversity;
+
+
+        const requestID =
+            ++mapFixRequest;
+
+
+        const status =
+            document.getElementById(
+                "mapStatus"
+            );
+
+
+        if (status) {
+
+            status.textContent =
+                "Finding the real location from the JSON address...";
+        }
+
+
+        const result =
+            await findRealLocation(
+                university,
+                requestID
+            );
+
+
+        if (
+            requestID !== mapFixRequest
+        ) {
+            return;
+        }
+
+
+        if (result) {
+
+            displayRealLocation(
+                result,
+                university,
+                requestID
+            );
+
+        } else {
+
+            showNotFound(
+                university
+            );
+        }
+    }
+
+
+    /* ---------------------------------------------------------
+       HOOK INTO SEARCH
+       --------------------------------------------------------- */
+
+    const searchBtn =
+        document.getElementById(
+            "searchBtn"
+        );
+
+
+    if (searchBtn) {
+
+        searchBtn.addEventListener(
+            "click",
+            function () {
+
+                mapFixRequest++;
+
+                setTimeout(
+                    correctMap,
+                    1800
+                );
+
+            }
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       HOOK INTO ENTER
+       --------------------------------------------------------- */
+
+    const input =
+        document.getElementById(
+            "universityInput"
+        );
+
+
+    if (input) {
+
+        input.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    mapFixRequest++;
+
+                    setTimeout(
+                        correctMap,
+                        1800
+                    );
+                }
+            }
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       AUTOCOMPLETE
+       --------------------------------------------------------- */
+
+    const autocomplete =
+        document.getElementById(
+            "autocomplete"
+        );
+
+
+    if (autocomplete) {
+
+        autocomplete.addEventListener(
+            "click",
+            function () {
+
+                mapFixRequest++;
+
+                setTimeout(
+                    correctMap,
+                    1800
+                );
+            }
+        );
+    }
+
+
+})();
+</script>
 </body>
 </html>
