@@ -4749,142 +4749,23 @@ loadUniversities();
 
 <script>
 /* ============================================================
-   MAP = EXACT ADDRESS FROM WORLD_UNIVERSITIES_ECTS.json
-   Uses the JSON address itself for geocoding.
-   Does NOT invent coordinates or use the university name.
+   EXACT JSON ADDRESS → MAP LOCATION
    Paste immediately before </body>
+
+   IMPORTANT:
+   - Uses selectedUniversity.address ONLY.
+   - The address shown in the popup is EXACTLY the JSON address.
+   - The map coordinates are obtained by geocoding that exact
+     address, not by using the university name.
+   - Does not replace the JSON address with a generated address.
    ============================================================ */
 
 (function () {
 
-    let addressRequestNumber = 0;
+    let lastAddress = "";
 
-    async function showJsonAddressOnMap() {
-
-        if (!selectedUniversity || !map) return;
-
-        const address = String(selectedUniversity.address || "").trim();
-
-        if (!address) return;
-
-        const requestNumber = ++addressRequestNumber;
-
-        /* Use ONLY the address stored in the JSON */
-        const query = encodeURIComponent(address);
-
-        try {
-
-            const url =
-                "https://nominatim.openstreetmap.org/search" +
-                "?format=jsonv2" +
-                "&limit=1" +
-                "&addressdetails=1" +
-                "&q=" + query;
-
-            const response = await fetch(url, {
-                cache: "no-store"
-            });
-
-            if (!response.ok) return;
-
-            const results = await response.json();
-
-            /* Ignore an old request if the user selected another university */
-            if (requestNumber !== addressRequestNumber) return;
-
-            if (!Array.isArray(results) || !results.length) {
-                console.warn(
-                    "JSON ADDRESS COULD NOT BE LOCATED:",
-                    address
-                );
-                return;
-            }
-
-            const place = results[0];
-
-            const lat = parseFloat(place.lat);
-            const lon = parseFloat(place.lon);
-
-            if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-                console.warn(
-                    "INVALID COORDINATES FOR JSON ADDRESS:",
-                    address
-                );
-                return;
-            }
-
-            /*
-             * The coordinates below come from geocoding the actual
-             * address contained in WORLD_UNIVERSITIES_ECTS.json.
-             */
-
-            map.setView([lat, lon], 16, {
-                animate: true
-            });
-
-            /* Remove the old marker */
-            if (marker) {
-                map.removeLayer(marker);
-            }
-
-            /* Create a NEW marker at the geocoded JSON address */
-            marker = L.marker([lat, lon]).addTo(map);
-
-            /*
-             * Show the ACTUAL JSON address in the map popup.
-             * Nothing is fabricated here.
-             */
-            marker.bindPopup(
-                '<div style="' +
-                    'font-family:Arial,Helvetica,sans-serif;' +
-                    'font-size:14px;' +
-                    'line-height:1.5;' +
-                    'min-width:240px;' +
-                '">' +
-
-                    '<div style="' +
-                        'font-weight:700;' +
-                        'font-size:15px;' +
-                        'margin-bottom:8px;' +
-                    '">' +
-                        escapeMapText(selectedUniversity.name || "") +
-                    '</div>' +
-
-                    '<div style="' +
-                        'border-top:1px solid #ccc;' +
-                        'padding-top:7px;' +
-                    '">' +
-                        escapeMapText(address) +
-                    '</div>' +
-
-                '</div>'
-            );
-
-            marker.openPopup();
-
-            /* Update the existing map status */
-            const status = document.getElementById("mapStatus");
-
-            if (status) {
-                status.textContent =
-                    "Location based on the address in the university JSON";
-            }
-
-        } catch (error) {
-
-            console.warn(
-                "ADDRESS GEOCODING FAILED:",
-                address,
-                error
-            );
-        }
-    }
-
-
-    /* Safely display JSON text inside the Leaflet popup */
-    function escapeMapText(value) {
-
-        return String(value)
+    function htmlEscape(text) {
+        return String(text)
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
@@ -4892,68 +4773,284 @@ loadUniversities();
             .replace(/'/g, "&#039;");
     }
 
+    async function locateExactJsonAddress() {
 
-    /*
-     * SEARCH BUTTON
-     * Wait for the original searchUniversity() to finish,
-     * then replace its map position with the JSON-address position.
-     */
-    const searchButton = document.getElementById("searchBtn");
+        if (!selectedUniversity || !map) return;
 
-    if (searchButton) {
+        const jsonAddress = String(
+            selectedUniversity.address || ""
+        ).trim();
 
-        searchButton.addEventListener("click", function () {
+        if (!jsonAddress) return;
 
-            setTimeout(function () {
-                showJsonAddressOnMap();
-            }, 1200);
+        /* Prevent unnecessary repeated geocoding */
+        if (jsonAddress === lastAddress) return;
+        lastAddress = jsonAddress;
 
-        });
+        /*
+         * Send the EXACT address from the JSON.
+         * No university name is added.
+         * No country is added.
+         * No city is added.
+         * No modification is made.
+         */
+        const searchURL =
+            "https://nominatim.openstreetmap.org/search" +
+            "?format=json" +
+            "&limit=1" +
+            "&addressdetails=1" +
+            "&q=" + encodeURIComponent(jsonAddress);
 
+        try {
+
+            const response = await fetch(searchURL, {
+                headers: {
+                    "Accept": "application/json"
+                },
+                cache: "no-store"
+            });
+
+            if (!response.ok) {
+                console.warn(
+                    "Could not geocode JSON address:",
+                    jsonAddress
+                );
+                return;
+            }
+
+            const data = await response.json();
+
+            /*
+             * IMPORTANT:
+             * If Nominatim cannot actually locate the address,
+             * DO NOT put the marker somewhere merely to make
+             * the map appear correct.
+             */
+            if (!Array.isArray(data) || data.length === 0) {
+
+                console.warn(
+                    "EXACT JSON ADDRESS NOT FOUND:",
+                    jsonAddress
+                );
+
+                const status =
+                    document.getElementById("mapStatus");
+
+                if (status) {
+                    status.textContent =
+                        "Exact JSON address could not be located";
+                }
+
+                return;
+            }
+
+            const result = data[0];
+
+            const latitude = Number(result.lat);
+            const longitude = Number(result.lon);
+
+            if (
+                !Number.isFinite(latitude) ||
+                !Number.isFinite(longitude)
+            ) {
+                console.warn(
+                    "Invalid coordinates returned for:",
+                    jsonAddress
+                );
+                return;
+            }
+
+            /*
+             * Remove the old university marker.
+             */
+            if (marker) {
+                map.removeLayer(marker);
+                marker = null;
+            }
+
+            /*
+             * Put the marker ONLY at the coordinates returned
+             * for the exact JSON address.
+             */
+            marker = L.marker([
+                latitude,
+                longitude
+            ]).addTo(map);
+
+            /*
+             * Show the EXACT original JSON address.
+             * Nothing returned by Nominatim replaces it.
+             */
+            marker.bindPopup(
+                '<div style="' +
+                    'font-family:Arial,Helvetica,sans-serif;' +
+                    'font-size:14px;' +
+                    'line-height:1.5;' +
+                    'min-width:260px;' +
+                '">' +
+
+                    '<div style="' +
+                        'font-weight:700;' +
+                        'font-size:15px;' +
+                        'margin-bottom:8px;' +
+                    '">' +
+                        htmlEscape(
+                            selectedUniversity.name || ""
+                        ) +
+                    '</div>' +
+
+                    '<div style="' +
+                        'font-weight:600;' +
+                        'margin-bottom:4px;' +
+                    '">' +
+                        'ADDRESS FROM JSON' +
+                    '</div>' +
+
+                    '<div>' +
+                        htmlEscape(jsonAddress) +
+                    '</div>' +
+
+                '</div>'
+            );
+
+            /*
+             * Zoom directly to the actual geocoded address.
+             */
+            map.setView(
+                [latitude, longitude],
+                17,
+                { animate: true }
+            );
+
+            marker.openPopup();
+
+            const status =
+                document.getElementById("mapStatus");
+
+            if (status) {
+                status.textContent =
+                    "Map location matched to the JSON address";
+            }
+
+            console.log(
+                "JSON ADDRESS:",
+                jsonAddress
+            );
+
+            console.log(
+                "MAP COORDINATES:",
+                latitude,
+                longitude
+            );
+
+            console.log(
+                "GEOCODED RESULT:",
+                result.display_name
+            );
+
+        } catch (error) {
+
+            console.error(
+                "JSON ADDRESS GEOCODING ERROR:",
+                error
+            );
+
+            const status =
+                document.getElementById("mapStatus");
+
+            if (status) {
+                status.textContent =
+                    "Unable to locate the JSON address";
+            }
+        }
     }
 
 
     /*
-     * ENTER KEY IN SEARCH BOX
+     * Run after the existing university search has finished
+     * creating/updating the map.
      */
-    const universityInput =
+    function waitForSelection() {
+
+        if (
+            selectedUniversity &&
+            map
+        ) {
+            locateExactJsonAddress();
+            return;
+        }
+
+        setTimeout(waitForSelection, 300);
+    }
+
+
+    /*
+     * Search button
+     */
+    const searchBtn =
+        document.getElementById("searchBtn");
+
+    if (searchBtn) {
+
+        searchBtn.addEventListener("click", function () {
+
+            lastAddress = "";
+
+            /*
+             * Let the original application complete its
+             * search/map operation first.
+             */
+            setTimeout(waitForSelection, 1500);
+
+        });
+    }
+
+
+    /*
+     * Enter key
+     */
+    const input =
         document.getElementById("universityInput");
 
-    if (universityInput) {
+    if (input) {
 
-        universityInput.addEventListener("keydown", function (event) {
+        input.addEventListener("keydown", function (event) {
 
             if (event.key === "Enter") {
 
-                setTimeout(function () {
-                    showJsonAddressOnMap();
-                }, 1200);
+                lastAddress = "";
 
+                setTimeout(
+                    waitForSelection,
+                    1500
+                );
             }
 
         });
-
     }
 
 
     /*
-     * AUTOCOMPLETE SELECTION
-     * If a university is selected directly from autocomplete,
-     * geocode its JSON address after the original search runs.
+     * Also detect a university selected from autocomplete.
      */
     const autocomplete =
         document.getElementById("autocomplete");
 
     if (autocomplete) {
 
-        autocomplete.addEventListener("click", function () {
+        autocomplete.addEventListener(
+            "click",
+            function () {
 
-            setTimeout(function () {
-                showJsonAddressOnMap();
-            }, 1200);
+                lastAddress = "";
 
-        });
+                setTimeout(
+                    waitForSelection,
+                    1500
+                );
 
+            }
+        );
     }
 
 })();
