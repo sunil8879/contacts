@@ -13,12 +13,12 @@
 
 :root {
     --aqua: #7fffd4;
-    --aqua-dark: #20d9ad;
-    --aqua-light: #d9fff3;
+    --aqua-dark: #18d7aa;
+    --aqua-light: #e1fff6;
     --black: #050505;
     --white: #ffffff;
-    --grey: #dfe8e5;
-    --dark-grey: #687570;
+    --grey: #dce7e3;
+    --text-grey: #66736f;
 }
 
 * {
@@ -33,8 +33,16 @@ body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     background:
-        radial-gradient(circle at 10% 10%, rgba(127,255,212,.20), transparent 25%),
-        radial-gradient(circle at 90% 90%, rgba(127,255,212,.18), transparent 25%),
+        radial-gradient(
+            circle at 8% 8%,
+            rgba(127,255,212,.20),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 92% 90%,
+            rgba(127,255,212,.16),
+            transparent 28%
+        ),
         var(--black);
     color: var(--white);
     min-height: 100vh;
@@ -48,14 +56,14 @@ body {
 .header {
     position: relative;
     overflow: hidden;
-    padding: 55px 20px 45px;
+    padding: 55px 20px 48px;
     text-align: center;
     background:
         linear-gradient(
             135deg,
-            var(--black) 0%,
-            #071510 45%,
-            var(--aqua-dark) 100%
+            #000000 0%,
+            #071712 45%,
+            #16cda1 100%
         );
     border-bottom: 4px solid var(--aqua);
 }
@@ -63,23 +71,23 @@ body {
 .header::before {
     content: "";
     position: absolute;
-    width: 350px;
-    height: 350px;
-    border: 2px solid rgba(127,255,212,.35);
+    width: 360px;
+    height: 360px;
+    border: 2px solid rgba(127,255,212,.30);
     border-radius: 50%;
-    top: -180px;
-    left: -100px;
+    top: -190px;
+    left: -110px;
 }
 
 .header::after {
     content: "";
     position: absolute;
-    width: 450px;
-    height: 450px;
-    border: 2px solid rgba(255,255,255,.15);
+    width: 470px;
+    height: 470px;
+    border: 2px solid rgba(255,255,255,.13);
     border-radius: 50%;
-    bottom: -280px;
-    right: -120px;
+    bottom: -300px;
+    right: -130px;
 }
 
 .header-content {
@@ -93,8 +101,8 @@ body {
     border: 1px solid var(--aqua);
     border-radius: 30px;
     color: var(--aqua);
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 11px;
+    font-weight: 900;
     letter-spacing: 3px;
     margin-bottom: 18px;
 }
@@ -121,7 +129,7 @@ h1 {
 
 
 /* =========================================================
-   SEARCH SECTION
+   SEARCH
 ========================================================= */
 
 .search-area {
@@ -168,13 +176,14 @@ h1 {
 
 #universitySearch:focus {
     border-color: var(--aqua-dark);
-    box-shadow: 0 0 0 4px rgba(32,217,173,.18);
+    box-shadow:
+        0 0 0 4px rgba(32,217,173,.18);
 }
 
 .search-help {
     margin-top: 9px;
     font-size: 12px;
-    color: var(--dark-grey);
+    color: var(--text-grey);
 }
 
 
@@ -221,7 +230,7 @@ h1 {
 
 .suggestion-location {
     margin-top: 4px;
-    color: var(--dark-grey);
+    color: var(--text-grey);
     font-size: 12px;
 }
 
@@ -272,7 +281,7 @@ h1 {
 
 
 /* =========================================================
-   UNIVERSITY RESULT
+   RESULT
 ========================================================= */
 
 .result {
@@ -316,33 +325,36 @@ h1 {
             var(--white)
         );
     display: flex;
-    gap: 30px;
+    gap: 28px;
     align-items: center;
 }
 
+
+/* SMALLER IMAGE / LOGO */
+
 .logo-box {
-    width: 135px;
-    height: 135px;
+    width: 105px;
+    height: 105px;
     flex-shrink: 0;
-    border-radius: 20px;
+    border-radius: 18px;
     background: var(--white);
-    border: 4px solid var(--black);
+    border: 3px solid var(--black);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    box-shadow: 8px 8px 0 var(--black);
+    box-shadow: 6px 6px 0 var(--black);
 }
 
 .logo-box img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    padding: 10px;
+    padding: 8px;
 }
 
 .logo-placeholder {
-    font-size: 48px;
+    font-size: 40px;
     font-weight: 900;
     color: var(--black);
 }
@@ -446,7 +458,7 @@ h1 {
 
 
 /* =========================================================
-   IMAGE SECTION
+   UNIVERSITY IMAGE
 ========================================================= */
 
 .image-section {
@@ -454,7 +466,8 @@ h1 {
     border-radius: 20px;
     overflow: hidden;
     background: #050505;
-    min-height: 180px;
+    min-height: 120px;
+    max-height: 280px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -463,14 +476,8 @@ h1 {
 .image-section img {
     display: block;
     width: 100%;
-    max-height: 420px;
+    max-height: 280px;
     object-fit: cover;
-}
-
-.image-caption {
-    padding: 35px;
-    text-align: center;
-    color: #bfcac6;
 }
 
 
@@ -582,9 +589,8 @@ h1 {
         </h1>
 
         <div class="subtitle">
-            Search university contact information from a global
-            database of universities — including address, email,
-            telephone, website and available university imagery.
+            Search global universities and instantly access
+            their country, address, email, telephone and website.
         </div>
 
     </div>
@@ -610,7 +616,7 @@ h1 {
                 type="text"
                 id="universitySearch"
                 autocomplete="off"
-                placeholder="Type at least 3 letters — e.g. Harvard, Mumbai, Oxford..."
+                placeholder="Type at least 3 letters..."
             >
 
             <div
@@ -621,7 +627,7 @@ h1 {
         </div>
 
         <div class="search-help">
-            Start typing at least 3 letters to search the global university database.
+            Start typing at least 3 letters to search the university database.
         </div>
 
     </div>
@@ -631,12 +637,10 @@ h1 {
 
 <!-- =======================================================
      MAIN
-======================================================== -->
+========================================================= -->
 
 <main class="main">
 
-
-    <!-- WELCOME -->
 
     <section
         id="welcome"
@@ -652,9 +656,9 @@ h1 {
         </h2>
 
         <p>
-            Enter a university name above to discover its
-            contact information, location, website and available
-            university image.
+            Search for a university to view its global contact
+            information, including country, address, email,
+            telephone number and official website.
         </p>
 
     </section>
@@ -669,7 +673,7 @@ h1 {
         <div class="university-hero">
 
 
-            <!-- HERO -->
+            <!-- UNIVERSITY HEADER -->
 
             <div class="hero-top">
 
@@ -678,7 +682,7 @@ h1 {
                     <img
                         id="universityLogo"
                         src=""
-                        alt="University logo"
+                        alt="University"
                         style="display:none;"
                     >
 
@@ -713,8 +717,6 @@ h1 {
             <div class="info-grid">
 
 
-                <!-- COUNTRY -->
-
                 <div class="info-card">
 
                     <div class="info-title">
@@ -729,8 +731,6 @@ h1 {
 
                 </div>
 
-
-                <!-- PHONE -->
 
                 <div class="info-card">
 
@@ -747,8 +747,6 @@ h1 {
                 </div>
 
 
-                <!-- EMAIL -->
-
                 <div class="info-card">
 
                     <div class="info-title">
@@ -764,8 +762,6 @@ h1 {
                 </div>
 
 
-                <!-- WEBSITE -->
-
                 <div class="info-card">
 
                     <div class="info-title">
@@ -780,8 +776,6 @@ h1 {
 
                 </div>
 
-
-                <!-- ADDRESS -->
 
                 <div class="info-card full">
 
@@ -814,13 +808,6 @@ h1 {
                     alt="University image"
                 >
 
-                <div
-                    id="imageCaption"
-                    class="image-caption"
-                    style="display:none;">
-                    University image unavailable
-                </div>
-
             </div>
 
 
@@ -849,8 +836,7 @@ h1 {
     </div>
 
     <div class="footer-text">
-        Global university contact directory • Powered by
-        WORLD_UNIVERSITIES_ECTS.json
+        Discover universities • Connect globally
     </div>
 
 </footer>
@@ -859,10 +845,11 @@ h1 {
 <script>
 
 /* ==========================================================
-   CONFIGURATION
+   DATABASE
 ========================================================== */
 
-const JSON_FILE = "WORLD_UNIVERSITIES_ECTS.json";
+const JSON_FILE =
+    "WORLD_UNIVERSITIES_ECTS.json";
 
 let universities = [];
 
@@ -874,85 +861,267 @@ let searchTimer = null;
 ========================================================== */
 
 const searchInput =
-    document.getElementById("universitySearch");
+    document.getElementById(
+        "universitySearch"
+    );
 
 const suggestions =
-    document.getElementById("suggestions");
+    document.getElementById(
+        "suggestions"
+    );
 
 const welcome =
-    document.getElementById("welcome");
+    document.getElementById(
+        "welcome"
+    );
 
 const result =
-    document.getElementById("result");
+    document.getElementById(
+        "result"
+    );
 
 const status =
-    document.getElementById("status");
+    document.getElementById(
+        "status"
+    );
 
 
 /* ==========================================================
-   LOAD DATABASE
+   COUNTRY DATABASE
+   International calling codes
 ========================================================== */
 
-async function loadDatabase() {
+const COUNTRY_CODES = [
 
-    status.textContent = "Loading global university database...";
-    status.className = "status loading";
+    { country:"Afghanistan", code:"+93" },
+    { country:"Albania", code:"+355" },
+    { country:"Algeria", code:"+213" },
+    { country:"Andorra", code:"+376" },
+    { country:"Angola", code:"+244" },
+    { country:"Argentina", code:"+54" },
+    { country:"Armenia", code:"+374" },
+    { country:"Australia", code:"+61" },
+    { country:"Austria", code:"+43" },
+    { country:"Azerbaijan", code:"+994" },
 
-    try {
+    { country:"Bahamas", code:"+1 242" },
+    { country:"Bahrain", code:"+973" },
+    { country:"Bangladesh", code:"+880" },
+    { country:"Barbados", code:"+1 246" },
+    { country:"Belarus", code:"+375" },
+    { country:"Belgium", code:"+32" },
+    { country:"Belize", code:"+501" },
+    { country:"Benin", code:"+229" },
+    { country:"Bhutan", code:"+975" },
+    { country:"Bolivia", code:"+591" },
+    { country:"Bosnia and Herzegovina", code:"+387" },
+    { country:"Botswana", code:"+267" },
+    { country:"Brazil", code:"+55" },
+    { country:"Brunei", code:"+673" },
+    { country:"Bulgaria", code:"+359" },
+    { country:"Burkina Faso", code:"+226" },
+    { country:"Burundi", code:"+257" },
 
-        const response =
-            await fetch(JSON_FILE, {
-                cache: "no-store"
-            });
+    { country:"Cambodia", code:"+855" },
+    { country:"Cameroon", code:"+237" },
+    { country:"Canada", code:"+1" },
+    { country:"Cape Verde", code:"+238" },
+    { country:"Central African Republic", code:"+236" },
+    { country:"Chad", code:"+235" },
+    { country:"Chile", code:"+56" },
+    { country:"China", code:"+86" },
+    { country:"Colombia", code:"+57" },
+    { country:"Comoros", code:"+269" },
+    { country:"Congo", code:"+242" },
+    { country:"Costa Rica", code:"+506" },
+    { country:"Croatia", code:"+385" },
+    { country:"Cuba", code:"+53" },
+    { country:"Cyprus", code:"+357" },
+    { country:"Czech Republic", code:"+420" },
 
-        if (!response.ok) {
+    { country:"Denmark", code:"+45" },
+    { country:"Djibouti", code:"+253" },
+    { country:"Dominica", code:"+1 767" },
+    { country:"Dominican Republic", code:"+1 809" },
 
-            throw new Error(
-                "Unable to load " + JSON_FILE
-            );
+    { country:"Ecuador", code:"+593" },
+    { country:"Egypt", code:"+20" },
+    { country:"El Salvador", code:"+503" },
+    { country:"Estonia", code:"+372" },
+    { country:"Eswatini", code:"+268" },
+    { country:"Ethiopia", code:"+251" },
 
-        }
+    { country:"Fiji", code:"+679" },
+    { country:"Finland", code:"+358" },
+    { country:"France", code:"+33" },
 
-        universities =
-            await response.json();
+    { country:"Gabon", code:"+241" },
+    { country:"Gambia", code:"+220" },
+    { country:"Georgia", code:"+995" },
+    { country:"Germany", code:"+49" },
+    { country:"Ghana", code:"+233" },
+    { country:"Greece", code:"+30" },
+    { country:"Grenada", code:"+1 473" },
+    { country:"Guatemala", code:"+502" },
+    { country:"Guinea", code:"+224" },
+    { country:"Guyana", code:"+592" },
+
+    { country:"Haiti", code:"+509" },
+    { country:"Honduras", code:"+504" },
+    { country:"Hong Kong", code:"+852" },
+    { country:"Hungary", code:"+36" },
+
+    { country:"Iceland", code:"+354" },
+    { country:"India", code:"+91" },
+    { country:"Indonesia", code:"+62" },
+    { country:"Iran", code:"+98" },
+    { country:"Iraq", code:"+964" },
+    { country:"Ireland", code:"+353" },
+    { country:"Israel", code:"+972" },
+    { country:"Italy", code:"+39" },
+
+    { country:"Jamaica", code:"+1 876" },
+    { country:"Japan", code:"+81" },
+    { country:"Jordan", code:"+962" },
+
+    { country:"Kazakhstan", code:"+7" },
+    { country:"Kenya", code:"+254" },
+    { country:"Kuwait", code:"+965" },
+    { country:"Kyrgyzstan", code:"+996" },
+
+    { country:"Laos", code:"+856" },
+    { country:"Latvia", code:"+371" },
+    { country:"Lebanon", code:"+961" },
+    { country:"Lesotho", code:"+266" },
+    { country:"Liberia", code:"+231" },
+    { country:"Libya", code:"+218" },
+    { country:"Liechtenstein", code:"+423" },
+    { country:"Lithuania", code:"+370" },
+    { country:"Luxembourg", code:"+352" },
+
+    { country:"Madagascar", code:"+261" },
+    { country:"Malawi", code:"+265" },
+    { country:"Malaysia", code:"+60" },
+    { country:"Maldives", code:"+960" },
+    { country:"Mali", code:"+223" },
+    { country:"Malta", code:"+356" },
+    { country:"Mauritania", code:"+222" },
+    { country:"Mauritius", code:"+230" },
+    { country:"Mexico", code:"+52" },
+    { country:"Moldova", code:"+373" },
+    { country:"Monaco", code:"+377" },
+    { country:"Mongolia", code:"+976" },
+    { country:"Montenegro", code:"+382" },
+    { country:"Morocco", code:"+212" },
+    { country:"Mozambique", code:"+258" },
+    { country:"Myanmar", code:"+95" },
+
+    { country:"Namibia", code:"+264" },
+    { country:"Nepal", code:"+977" },
+    { country:"Netherlands", code:"+31" },
+    { country:"New Zealand", code:"+64" },
+    { country:"Nicaragua", code:"+505" },
+    { country:"Niger", code:"+227" },
+    { country:"Nigeria", code:"+234" },
+    { country:"North Macedonia", code:"+389" },
+    { country:"Norway", code:"+47" },
+
+    { country:"Oman", code:"+968" },
+
+    { country:"Pakistan", code:"+92" },
+    { country:"Panama", code:"+507" },
+    { country:"Papua New Guinea", code:"+675" },
+    { country:"Paraguay", code:"+595" },
+    { country:"Peru", code:"+51" },
+    { country:"Philippines", code:"+63" },
+    { country:"Poland", code:"+48" },
+    { country:"Portugal", code:"+351" },
+
+    { country:"Qatar", code:"+974" },
+
+    { country:"Romania", code:"+40" },
+    { country:"Russia", code:"+7" },
+    { country:"Rwanda", code:"+250" },
+
+    { country:"Saudi Arabia", code:"+966" },
+    { country:"Senegal", code:"+221" },
+    { country:"Serbia", code:"+381" },
+    { country:"Singapore", code:"+65" },
+    { country:"Slovakia", code:"+421" },
+    { country:"Slovenia", code:"+386" },
+    { country:"Somalia", code:"+252" },
+    { country:"South Africa", code:"+27" },
+    { country:"South Korea", code:"+82" },
+    { country:"Spain", code:"+34" },
+    { country:"Sri Lanka", code:"+94" },
+    { country:"Sudan", code:"+249" },
+    { country:"Suriname", code:"+597" },
+    { country:"Sweden", code:"+46" },
+    { country:"Switzerland", code:"+41" },
+    { country:"Syria", code:"+963" },
+
+    { country:"Taiwan", code:"+886" },
+    { country:"Tajikistan", code:"+992" },
+    { country:"Tanzania", code:"+255" },
+    { country:"Thailand", code:"+66" },
+    { country:"Togo", code:"+228" },
+    { country:"Tonga", code:"+676" },
+    { country:"Trinidad and Tobago", code:"+1 868" },
+    { country:"Tunisia", code:"+216" },
+    { country:"Türkiye", code:"+90" },
+    { country:"Turkmenistan", code:"+993" },
+
+    { country:"Uganda", code:"+256" },
+    { country:"Ukraine", code:"+380" },
+    { country:"United Arab Emirates", code:"+971" },
+    { country:"United Kingdom", code:"+44" },
+    { country:"United States", code:"+1" },
+    { country:"Uruguay", code:"+598" },
+    { country:"Uzbekistan", code:"+998" },
+
+    { country:"Venezuela", code:"+58" },
+    { country:"Vietnam", code:"+84" },
+
+    { country:"Yemen", code:"+967" },
+    { country:"Zambia", code:"+260" },
+    { country:"Zimbabwe", code:"+263" }
+
+];
 
 
-        if (!Array.isArray(universities)) {
+/* ==========================================================
+   COUNTRY ALIASES
+========================================================== */
 
-            throw new Error(
-                "JSON must contain an array of university records."
-            );
+const COUNTRY_ALIASES = {
 
-        }
+    "usa": "United States",
+    "us": "United States",
+    "u.s.a": "United States",
+    "u.s.": "United States",
 
+    "uk": "United Kingdom",
+    "u.k.": "United Kingdom",
+    "britain": "United Kingdom",
+    "england": "United Kingdom",
 
-        status.textContent =
-            universities.length.toLocaleString() +
-            " universities loaded.";
+    "iran": "Iran",
+    "islamic republic of iran": "Iran",
 
-        status.className = "status";
+    "turkey": "Türkiye",
+    "türkiye": "Türkiye",
 
+    "russia": "Russia",
+    "russian federation": "Russia",
 
-        console.log(
-            "University database loaded:",
-            universities.length
-        );
+    "south korea": "South Korea",
+    "republic of korea": "South Korea",
 
-    }
+    "czechia": "Czech Republic",
 
-    catch (error) {
+    "uae": "United Arab Emirates"
 
-        console.error(error);
-
-        status.textContent =
-            "Could not load WORLD_UNIVERSITIES_ECTS.json. " +
-            "Make sure index.html and the JSON file are in the same folder.";
-
-        status.className = "status error";
-
-    }
-
-}
+};
 
 
 /* ==========================================================
@@ -970,109 +1139,81 @@ function normalize(text) {
 
 
 /* ==========================================================
-   GET UNIVERSITY COUNTRY
+   COUNTRY FROM EXISTING FIELD
 ========================================================== */
 
-function getCountry(university) {
+function countryFromExistingField(university) {
 
-    /*
-       Priority:
+    const fields = [
 
-       1. Existing country field, if present.
-       2. Country contained in address.
-       3. Phone number country detection.
-       4. Country ID displayed as fallback.
-    */
+        university.country,
+        university.country_name,
+        university.countryName,
+        university.country_title
+
+    ];
 
 
-    if (university.country) {
+    for (const value of fields) {
 
-        return university.country;
+        if (!value) {
+            continue;
+        }
+
+        const clean =
+            String(value).trim();
+
+
+        if (!clean) {
+            continue;
+        }
+
+
+        const alias =
+            COUNTRY_ALIASES[
+                normalize(clean)
+            ];
+
+
+        if (alias) {
+            return alias;
+        }
+
+
+        return clean;
 
     }
 
 
-    const address =
-        String(university.address || "");
+    return "";
+
+}
 
 
-    /*
-       Try to identify country from the end of
-       the address.
+/* ==========================================================
+   COUNTRY FROM ADDRESS
+========================================================== */
 
-       Example:
+function countryFromAddress(address) {
 
-       Avenida Emilio Civit 150,
-       M5500, Mendoza, Argentina
-    */
-
-    const addressCountries = [
-
-        "Argentina",
-        "Australia",
-        "Austria",
-        "Belgium",
-        "Brazil",
-        "Canada",
-        "China",
-        "Colombia",
-        "Croatia",
-        "Czech Republic",
-        "Denmark",
-        "Egypt",
-        "Finland",
-        "France",
-        "Germany",
-        "Greece",
-        "Hungary",
-        "India",
-        "Indonesia",
-        "Ireland",
-        "Israel",
-        "Italy",
-        "Japan",
-        "Kenya",
-        "Malaysia",
-        "Mexico",
-        "Netherlands",
-        "New Zealand",
-        "Nigeria",
-        "Norway",
-        "Pakistan",
-        "Peru",
-        "Philippines",
-        "Poland",
-        "Portugal",
-        "Romania",
-        "Russia",
-        "Singapore",
-        "South Africa",
-        "South Korea",
-        "Spain",
-        "Sri Lanka",
-        "Sweden",
-        "Switzerland",
-        "Thailand",
-        "Türkiye",
-        "Turkey",
-        "Ukraine",
-        "United Arab Emirates",
-        "United Kingdom",
-        "United States",
-        "Uruguay",
-        "Venezuela",
-        "Vietnam"
-    ];
-
-
-    const lowerAddress =
+    const a =
         normalize(address);
 
 
-    for (const country of addressCountries) {
+    const countries =
+        COUNTRY_CODES
+            .map(x => x.country)
+            .sort(
+                (x, y) =>
+                    normalize(y).length -
+                    normalize(x).length
+            );
+
+
+    for (const country of countries) {
 
         if (
-            lowerAddress.includes(
+            a.includes(
                 normalize(country)
             )
         ) {
@@ -1084,70 +1225,16 @@ function getCountry(university) {
     }
 
 
-    /*
-       Try international telephone prefixes.
-
-       This is only a fallback because a local phone
-       number without an international country code
-       cannot always be identified reliably.
-    */
-
-    const phone =
-        String(university.phone || "")
-            .replace(/[^\d+]/g, "");
-
-
-    const phoneCountries = [
-
-        ["+91", "India"],
-        ["+44", "United Kingdom"],
-        ["+49", "Germany"],
-        ["+33", "France"],
-        ["+39", "Italy"],
-        ["+34", "Spain"],
-        ["+31", "Netherlands"],
-        ["+32", "Belgium"],
-        ["+43", "Austria"],
-        ["+41", "Switzerland"],
-        ["+46", "Sweden"],
-        ["+47", "Norway"],
-        ["+45", "Denmark"],
-        ["+358", "Finland"],
-        ["+48", "Poland"],
-        ["+351", "Portugal"],
-        ["+30", "Greece"],
-        ["+36", "Hungary"],
-        ["+40", "Romania"],
-        ["+380", "Ukraine"],
-        ["+7", "Russia / Kazakhstan"],
-        ["+81", "Japan"],
-        ["+82", "South Korea"],
-        ["+86", "China"],
-        ["+65", "Singapore"],
-        ["+60", "Malaysia"],
-        ["+66", "Thailand"],
-        ["+62", "Indonesia"],
-        ["+61", "Australia"],
-        ["+64", "New Zealand"],
-        ["+1", "United States / Canada"],
-        ["+52", "Mexico"],
-        ["+55", "Brazil"],
-        ["+54", "Argentina"],
-        ["+57", "Colombia"],
-        ["+51", "Peru"],
-        ["+27", "South Africa"],
-        ["+234", "Nigeria"],
-        ["+254", "Kenya"],
-        ["+971", "United Arab Emirates"]
-    ];
-
-
     for (
-        const [prefix, country]
-        of phoneCountries
+        const [alias, country]
+        of Object.entries(COUNTRY_ALIASES)
     ) {
 
-        if (phone.startsWith(prefix)) {
+        if (
+            a.includes(
+                normalize(alias)
+            )
+        ) {
 
             return country;
 
@@ -1156,10 +1243,363 @@ function getCountry(university) {
     }
 
 
+    return "";
+
+}
+
+
+/* ==========================================================
+   COUNTRY FROM UNIVERSITY NAME
+========================================================== */
+
+function countryFromUniversityName(
+    university
+) {
+
+    const name =
+        normalize(
+            university.name
+        );
+
+
     /*
-       Last fallback:
-       show country_id rather than inventing
-       a country name.
+       Useful geographical clues in university names.
+       These are deliberately conservative.
+    */
+
+    const clues = [
+
+        ["university of delhi", "India"],
+        ["delhi university", "India"],
+        ["mumbai university", "India"],
+        ["university of mumbai", "India"],
+        ["jawaharlal nehru", "India"],
+        ["banaras hindu", "India"],
+        ["indian institute", "India"],
+        ["iit ", "India"],
+
+        ["university of london", "United Kingdom"],
+        ["university of oxford", "United Kingdom"],
+        ["university of cambridge", "United Kingdom"],
+
+        ["harvard university", "United States"],
+        ["stanford university", "United States"],
+        ["yale university", "United States"],
+        ["massachusetts institute of technology", "United States"],
+
+        ["university of toronto", "Canada"],
+        ["mcgill university", "Canada"],
+
+        ["university of melbourne", "Australia"],
+        ["university of sydney", "Australia"],
+
+        ["university of tokyo", "Japan"],
+        ["kyoto university", "Japan"],
+
+        ["university of munich", "Germany"],
+        ["technical university of munich", "Germany"],
+        ["heidelberg university", "Germany"],
+        ["free university of berlin", "Germany"],
+
+        ["university of paris", "France"],
+        ["sorbonne", "France"],
+
+        ["university of rome", "Italy"],
+        ["sapienza", "Italy"],
+
+        ["university of madrid", "Spain"],
+        ["complutense", "Spain"],
+
+        ["university of amsterdam", "Netherlands"],
+        ["erasmus university", "Netherlands"],
+
+        ["university of oslo", "Norway"],
+        ["university of stockholm", "Sweden"],
+        ["university of copenhagen", "Denmark"],
+        ["university of helsinki", "Finland"],
+
+        ["university of zurich", "Switzerland"],
+        ["eth zurich", "Switzerland"],
+
+        ["university of vienna", "Austria"],
+
+        ["university of warsaw", "Poland"],
+
+        ["university of lisbon", "Portugal"],
+
+        ["university of athens", "Greece"],
+
+        ["adib university of sari", "Iran"]
+
+    ];
+
+
+    for (const [clue, country] of clues) {
+
+        if (
+            name.includes(
+                normalize(clue)
+            )
+        ) {
+
+            return country;
+
+        }
+
+    }
+
+
+    return "";
+
+}
+
+
+/* ==========================================================
+   COUNTRY FROM PHONE
+========================================================== */
+
+function countryFromPhone(
+    phone,
+    university
+) {
+
+    let p =
+        String(phone || "")
+            .trim();
+
+
+    if (!p) {
+        return "";
+    }
+
+
+    /*
+       If the number already has +country code.
+    */
+
+    if (p.startsWith("+")) {
+
+        const digits =
+            p.replace(
+                /\D/g,
+                ""
+            );
+
+
+        /*
+           Longest country-code matching first.
+        */
+
+        const sorted =
+            [...COUNTRY_CODES]
+                .sort(
+                    (a, b) =>
+                        b.code.replace(/\D/g,"").length -
+                        a.code.replace(/\D/g,"").length
+                );
+
+
+        for (const item of sorted) {
+
+            const code =
+                item.code.replace(
+                    /\D/g,
+                    ""
+                );
+
+
+            if (
+                digits.startsWith(code)
+            ) {
+
+                return item.country;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+       ------------------------------------------------------
+       Special local/national number handling
+       ------------------------------------------------------
+
+       Example:
+
+       Adib University of Sari
+       1133034153
+
+       Iran:
+       +98 11 3303 4153
+
+       The 11 area code belongs to Mazandaran.
+    */
+
+    const digits =
+        p.replace(
+            /\D/g,
+            ""
+        );
+
+
+    const universityName =
+        normalize(
+            university.name
+        );
+
+
+    const address =
+        normalize(
+            university.address
+        );
+
+
+    /*
+       Iran / Mazandaran / Sari
+    */
+
+    if (
+        digits.startsWith("11") &&
+        (
+            universityName.includes("sari") ||
+            address.includes("sari") ||
+            address.includes("mazandaran")
+        )
+    ) {
+
+        return "Iran";
+
+    }
+
+
+    /*
+       India common national university numbers.
+    */
+
+    if (
+        (
+            universityName.includes("india") ||
+            address.includes("india")
+        ) &&
+        digits.length >= 10
+    ) {
+
+        return "India";
+
+    }
+
+
+    /*
+       If the existing phone contains a recognizable
+       country-code-like prefix without '+'.
+    */
+
+    const noPlusCandidates =
+        [...COUNTRY_CODES]
+            .sort(
+                (a, b) =>
+                    b.code.replace(/\D/g,"").length -
+                    a.code.replace(/\D/g,"").length
+            );
+
+
+    for (
+        const item
+        of noPlusCandidates
+    ) {
+
+        const code =
+            item.code.replace(
+                /\D/g,
+                ""
+            );
+
+
+        if (
+            digits.startsWith(code) &&
+            digits.length >
+            code.length + 5
+        ) {
+
+            return item.country;
+
+        }
+
+    }
+
+
+    return "";
+
+}
+
+
+/* ==========================================================
+   FIND COUNTRY
+========================================================== */
+
+function getCountry(university) {
+
+    /*
+       Priority:
+
+       1. Existing country field
+       2. Address
+       3. University name
+       4. Phone + university/address clues
+       5. Country ID fallback
+    */
+
+    let country =
+        countryFromExistingField(
+            university
+        );
+
+
+    if (country) {
+        return country;
+    }
+
+
+    country =
+        countryFromAddress(
+            university.address
+        );
+
+
+    if (country) {
+        return country;
+    }
+
+
+    country =
+        countryFromUniversityName(
+            university
+        );
+
+
+    if (country) {
+        return country;
+    }
+
+
+    country =
+        countryFromPhone(
+            university.phone,
+            university
+        );
+
+
+    if (country) {
+        return country;
+    }
+
+
+    /*
+       Do NOT invent a country from country_id.
+       It is only an internal database ID unless
+       we have the corresponding country table.
     */
 
     if (
@@ -1179,32 +1619,265 @@ function getCountry(university) {
 
 
 /* ==========================================================
-   FORMAT ADDRESS
+   GET COUNTRY CODE
+========================================================== */
+
+function getCountryCode(country) {
+
+    const normalized =
+        normalize(country);
+
+
+    const alias =
+        COUNTRY_ALIASES[
+            normalized
+        ] || country;
+
+
+    const found =
+        COUNTRY_CODES.find(
+            item =>
+                normalize(
+                    item.country
+                ) ===
+                normalize(alias)
+        );
+
+
+    return found
+        ? found.code
+        : "";
+
+}
+
+
+/* ==========================================================
+   FORMAT PHONE
+========================================================== */
+
+function formatPhone(
+    phone,
+    country,
+    university
+) {
+
+    let original =
+        String(phone || "").trim();
+
+
+    if (!original) {
+
+        return "Phone number not available";
+
+    }
+
+
+    /*
+       Already international.
+    */
+
+    if (
+        original.startsWith("+")
+    ) {
+
+        return original;
+
+    }
+
+
+    const code =
+        getCountryCode(country);
+
+
+    if (!code) {
+
+        return original;
+
+    }
+
+
+    /*
+       Remove all non-digits.
+    */
+
+    let digits =
+        original.replace(
+            /\D/g,
+            ""
+        );
+
+
+    if (!digits) {
+
+        return original;
+
+    }
+
+
+    /*
+       Remove international prefix 00.
+    */
+
+    if (
+        digits.startsWith("00")
+    ) {
+
+        digits =
+            digits.substring(2);
+
+        return "+" + digits;
+
+    }
+
+
+    /*
+       Country-specific national-prefix
+       handling.
+
+       Iran:
+       01133034153
+       ->
+       +98 11 3303 4153
+
+       Our database may instead contain:
+       1133034153
+    */
+
+    if (
+        country === "Iran"
+    ) {
+
+        if (
+            digits.startsWith("0")
+        ) {
+
+            digits =
+                digits.substring(1);
+
+        }
+
+
+        if (
+            digits.startsWith("11")
+        ) {
+
+            return (
+                "+98 " +
+                digits.substring(0,2) +
+                " " +
+                digits.substring(2)
+            );
+
+        }
+
+    }
+
+
+    /*
+       India:
+       Remove leading 0 from
+       national landline numbers.
+    */
+
+    if (
+        country === "India" &&
+        digits.startsWith("0")
+    ) {
+
+        digits =
+            digits.substring(1);
+
+    }
+
+
+    /*
+       Germany / France / UK / most countries:
+       remove the national leading zero.
+    */
+
+    if (
+        digits.startsWith("0")
+    ) {
+
+        digits =
+            digits.substring(1);
+
+    }
+
+
+    const cleanCode =
+        code.replace(
+            /\s/g,
+            ""
+        );
+
+
+    /*
+       Special formatting for common
+       North American +1 numbers.
+    */
+
+    if (
+        cleanCode === "+1" &&
+        digits.length === 10
+    ) {
+
+        return (
+            "+1 " +
+            digits.substring(0,3) +
+            " " +
+            digits.substring(3,6) +
+            " " +
+            digits.substring(6)
+        );
+
+    }
+
+
+    return (
+        code +
+        " " +
+        digits
+    );
+
+}
+
+
+/* ==========================================================
+   ADDRESS
 ========================================================== */
 
 function getAddress(university) {
 
     let address =
-        String(university.address || "").trim();
+        String(
+            university.address || ""
+        ).trim();
+
 
     const postal =
-        String(university.postal_code || "").trim();
+        String(
+            university.postal_code || ""
+        ).trim();
 
 
     if (
         postal &&
-        !normalize(address).includes(
-            normalize(postal)
-        )
+        !normalize(address)
+            .includes(
+                normalize(postal)
+            )
     ) {
 
         if (address) {
 
-            address += ", " + postal;
+            address +=
+                ", " + postal;
 
         } else {
 
-            address = postal;
+            address =
+                postal;
 
         }
 
@@ -1224,7 +1897,9 @@ function getAddress(university) {
 function getWebsite(university) {
 
     let website =
-        String(university.website || "").trim();
+        String(
+            university.website || ""
+        ).trim();
 
 
     if (!website) {
@@ -1235,12 +1910,17 @@ function getWebsite(university) {
 
 
     if (
-        !website.startsWith("http://") &&
-        !website.startsWith("https://")
+        !website.startsWith(
+            "http://"
+        ) &&
+        !website.startsWith(
+            "https://"
+        )
     ) {
 
         website =
-            "https://" + website;
+            "https://" +
+            website;
 
     }
 
@@ -1251,22 +1931,89 @@ function getWebsite(university) {
 
 
 /* ==========================================================
-   EMAIL
+   LOAD DATABASE
 ========================================================== */
 
-function getEmail(university) {
+async function loadDatabase() {
 
-    const email =
-        String(university.email || "").trim();
+    status.textContent =
+        "Loading global university database...";
+
+    status.className =
+        "status loading";
 
 
-    return email;
+    try {
+
+        const response =
+            await fetch(
+                JSON_FILE,
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load database"
+            );
+
+        }
+
+
+        universities =
+            await response.json();
+
+
+        if (
+            !Array.isArray(
+                universities
+            )
+        ) {
+
+            throw new Error(
+                "JSON must contain an array."
+            );
+
+        }
+
+
+        status.textContent =
+            universities.length
+                .toLocaleString() +
+            " universities loaded.";
+
+        status.className =
+            "status";
+
+
+        console.log(
+            "Universities loaded:",
+            universities.length
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        status.textContent =
+            "Could not load WORLD_UNIVERSITIES_ECTS.json. " +
+            "Keep index.html and the JSON file together.";
+
+        status.className =
+            "status error";
+
+    }
 
 }
 
 
 /* ==========================================================
-   SEARCH DATABASE
+   SEARCH
 ========================================================== */
 
 function searchUniversities(query) {
@@ -1282,98 +2029,14 @@ function searchUniversities(query) {
     }
 
 
-    /*
-       First search by university name.
-    */
-
-    const matches =
-        universities
-            .filter(university => {
-
-                return normalize(
+    return universities
+        .filter(
+            university =>
+                normalize(
                     university.name
-                ).includes(q);
-
-            })
-            .slice(0, 30);
-
-
-    return matches;
-
-}
-
-
-/* ==========================================================
-   SHOW SUGGESTIONS
-========================================================== */
-
-function showSuggestions(matches) {
-
-    suggestions.innerHTML = "";
-
-
-    if (!matches.length) {
-
-        suggestions.style.display = "none";
-
-        return;
-
-    }
-
-
-    matches.forEach(university => {
-
-        const item =
-            document.createElement("div");
-
-        item.className = "suggestion";
-
-
-        const country =
-            getCountry(university);
-
-
-        item.innerHTML = `
-
-            <div class="suggestion-name">
-                ${escapeHtml(university.name || "Unnamed University")}
-            </div>
-
-            <div class="suggestion-location">
-                ${escapeHtml(country)}
-                ${university.city_id
-                    ? " • City ID " +
-                      escapeHtml(university.city_id)
-                    : ""}
-            </div>
-
-        `;
-
-
-        item.addEventListener(
-            "click",
-            function() {
-
-                searchInput.value =
-                    university.name || "";
-
-                suggestions.style.display =
-                    "none";
-
-                displayUniversity(
-                    university
-                );
-
-            }
-        );
-
-
-        suggestions.appendChild(item);
-
-    });
-
-
-    suggestions.style.display = "block";
+                ).includes(q)
+        )
+        .slice(0,30);
 
 }
 
@@ -1385,11 +2048,114 @@ function showSuggestions(matches) {
 function escapeHtml(value) {
 
     return String(value || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* ==========================================================
+   SHOW SUGGESTIONS
+========================================================== */
+
+function showSuggestions(
+    matches
+) {
+
+    suggestions.innerHTML = "";
+
+
+    if (!matches.length) {
+
+        suggestions.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    matches.forEach(
+        university => {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "suggestion";
+
+
+            const country =
+                getCountry(
+                    university
+                );
+
+
+            item.innerHTML = `
+
+                <div class="suggestion-name">
+                    ${escapeHtml(
+                        university.name ||
+                        "Unnamed University"
+                    )}
+                </div>
+
+                <div class="suggestion-location">
+                    ${escapeHtml(country)}
+                </div>
+
+            `;
+
+
+            item.addEventListener(
+                "click",
+                function() {
+
+                    searchInput.value =
+                        university.name || "";
+
+                    suggestions.style.display =
+                        "none";
+
+                    displayUniversity(
+                        university
+                    );
+
+                }
+            );
+
+
+            suggestions.appendChild(
+                item
+            );
+
+        }
+    );
+
+
+    suggestions.style.display =
+        "block";
 
 }
 
@@ -1398,10 +2164,13 @@ function escapeHtml(value) {
    DISPLAY UNIVERSITY
 ========================================================== */
 
-function displayUniversity(university) {
+function displayUniversity(
+    university
+) {
 
     welcome.style.display =
         "none";
+
 
     result.style.display =
         "block";
@@ -1413,30 +2182,41 @@ function displayUniversity(university) {
 
 
     const country =
-        getCountry(university);
+        getCountry(
+            university
+        );
 
 
     const address =
-        getAddress(university);
+        getAddress(
+            university
+        );
 
 
     const phone =
-        String(
-            university.phone || ""
-        ).trim();
+        formatPhone(
+            university.phone,
+            country,
+            university
+        );
 
 
     const email =
-        getEmail(university);
+        String(
+            university.email || ""
+        ).trim();
 
 
     const website =
-        getWebsite(university);
+        getWebsite(
+            university
+        );
 
 
     document.getElementById(
         "universityName"
-    ).textContent = name;
+    ).textContent =
+        name;
 
 
     document.getElementById(
@@ -1460,8 +2240,7 @@ function displayUniversity(university) {
     document.getElementById(
         "phone"
     ).textContent =
-        phone ||
-        "Phone number not available";
+        phone;
 
 
     /*
@@ -1469,7 +2248,9 @@ function displayUniversity(university) {
     */
 
     const emailElement =
-        document.getElementById("email");
+        document.getElementById(
+            "email"
+        );
 
 
     if (email) {
@@ -1479,9 +2260,7 @@ function displayUniversity(university) {
                 ${escapeHtml(email)}
              </a>`;
 
-    }
-
-    else {
+    } else {
 
         emailElement.textContent =
             "Email not available";
@@ -1494,21 +2273,31 @@ function displayUniversity(university) {
     */
 
     const websiteElement =
-        document.getElementById("website");
+        document.getElementById(
+            "website"
+        );
 
 
     if (website) {
 
-        let displayWebsite =
+        const displayWebsite =
             website
-                .replace(/^https?:\/\//, "")
-                .replace(/\/$/, "");
+                .replace(
+                    /^https?:\/\//,
+                    ""
+                )
+                .replace(
+                    /\/$/,
+                    ""
+                );
 
 
         websiteElement.innerHTML = `
 
             <div>
-                ${escapeHtml(displayWebsite)}
+                ${escapeHtml(
+                    displayWebsite
+                )}
             </div>
 
             <a
@@ -1516,24 +2305,20 @@ function displayUniversity(university) {
                 href="${escapeHtml(website)}"
                 target="_blank"
                 rel="noopener noreferrer">
+
                 VISIT WEBSITE ↗
+
             </a>
 
         `;
 
-    }
-
-    else {
+    } else {
 
         websiteElement.textContent =
             "Website not available";
 
     }
 
-
-    /*
-       LOGO / IMAGE
-    */
 
     loadUniversityImage(
         university,
@@ -1542,24 +2327,23 @@ function displayUniversity(university) {
     );
 
 
-    /*
-       Scroll result into view.
-    */
+    setTimeout(
+        function() {
 
-    setTimeout(() => {
+            result.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
 
-        result.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-
-    }, 100);
+        },
+        100
+    );
 
 }
 
 
 /* ==========================================================
-   LOAD UNIVERSITY IMAGE
+   UNIVERSITY IMAGE
 ========================================================== */
 
 function loadUniversityImage(
@@ -1600,27 +2384,24 @@ function loadUniversityImage(
 
 
     /*
-       ------------------------------------------------------
-       1. Try dataset logo
-       ------------------------------------------------------
+       Dataset logo
     */
 
     if (university.logo) {
 
-        const possibleLogo =
+        const logoName =
             String(
                 university.logo
             ).trim();
 
 
-        /*
-           If logo already contains a URL,
-           use it directly.
-        */
-
         if (
-            possibleLogo.startsWith("http://") ||
-            possibleLogo.startsWith("https://")
+            logoName.startsWith(
+                "http://"
+            ) ||
+            logoName.startsWith(
+                "https://"
+            )
         ) {
 
             logo.onload =
@@ -1640,7 +2421,6 @@ function loadUniversityImage(
 
                     tryWikipediaImage(
                         name,
-                        website,
                         imageSection,
                         image
                     );
@@ -1649,7 +2429,7 @@ function loadUniversityImage(
 
 
             logo.src =
-                possibleLogo;
+                logoName;
 
 
             return;
@@ -1657,33 +2437,29 @@ function loadUniversityImage(
         }
 
 
-        /*
-           Try logo in common local locations.
-        */
+        const paths = [
 
-        const logoPaths = [
+            logoName,
 
-            possibleLogo,
+            "images/" + logoName,
 
-            "images/" + possibleLogo,
+            "logos/" + logoName,
 
-            "logos/" + possibleLogo,
-
-            "logo/" + possibleLogo
+            "logo/" + logoName
 
         ];
 
 
         tryLogoPaths(
-            logoPaths,
+            paths,
             0,
             logo,
             placeholder,
             function() {
 
-                tryWikipediaImage(
-                    name,
+                tryWebsiteFavicon(
                     website,
+                    name,
                     imageSection,
                     image
                 );
@@ -1698,68 +2474,12 @@ function loadUniversityImage(
 
 
     /*
-       ------------------------------------------------------
-       2. Try website favicon
-       ------------------------------------------------------
+       Website favicon
     */
 
-    if (website) {
-
-        const domain =
-            website
-                .replace(/^https?:\/\//, "")
-                .split("/")[0];
-
-
-        const favicon =
-            "https://www.google.com/s2/favicons?domain=" +
-            encodeURIComponent(domain) +
-            "&sz=256";
-
-
-        logo.onload =
-            function() {
-
-                logo.style.display =
-                    "block";
-
-                placeholder.style.display =
-                    "none";
-
-            };
-
-
-        logo.onerror =
-            function() {
-
-                tryWikipediaImage(
-                    name,
-                    website,
-                    imageSection,
-                    image
-                );
-
-            };
-
-
-        logo.src =
-            favicon;
-
-
-        return;
-
-    }
-
-
-    /*
-       ------------------------------------------------------
-       3. Wikipedia
-       ------------------------------------------------------
-    */
-
-    tryWikipediaImage(
-        name,
+    tryWebsiteFavicon(
         website,
+        name,
         imageSection,
         image
     );
@@ -1779,7 +2499,9 @@ function tryLogoPaths(
     fallback
 ) {
 
-    if (index >= paths.length) {
+    if (
+        index >= paths.length
+    ) {
 
         fallback();
 
@@ -1788,11 +2510,11 @@ function tryLogoPaths(
     }
 
 
-    const testImage =
+    const test =
         new Image();
 
 
-    testImage.onload =
+    test.onload =
         function() {
 
             logo.src =
@@ -1807,7 +2529,7 @@ function tryLogoPaths(
         };
 
 
-    testImage.onerror =
+    test.onerror =
         function() {
 
             tryLogoPaths(
@@ -1821,19 +2543,100 @@ function tryLogoPaths(
         };
 
 
-    testImage.src =
+    test.src =
         paths[index];
 
 }
 
 
 /* ==========================================================
-   WIKIPEDIA IMAGE
+   WEBSITE FAVICON
+========================================================== */
+
+function tryWebsiteFavicon(
+    website,
+    name,
+    imageSection,
+    image
+) {
+
+    if (!website) {
+
+        tryWikipediaImage(
+            name,
+            imageSection,
+            image
+        );
+
+        return;
+
+    }
+
+
+    const domain =
+        website
+            .replace(
+                /^https?:\/\//,
+                ""
+            )
+            .split("/")[0];
+
+
+    const favicon =
+        "https://www.google.com/s2/favicons" +
+        "?domain=" +
+        encodeURIComponent(domain) +
+        "&sz=256";
+
+
+    const logo =
+        document.getElementById(
+            "universityLogo"
+        );
+
+
+    const placeholder =
+        document.getElementById(
+            "logoPlaceholder"
+        );
+
+
+    logo.onload =
+        function() {
+
+            logo.style.display =
+                "block";
+
+            placeholder.style.display =
+                "none";
+
+        };
+
+
+    logo.onerror =
+        function() {
+
+            tryWikipediaImage(
+                name,
+                imageSection,
+                image
+            );
+
+        };
+
+
+    logo.src =
+        favicon;
+
+}
+
+
+/* ==========================================================
+   WIKIPEDIA IMAGE FALLBACK
 ========================================================== */
 
 async function tryWikipediaImage(
     name,
-    website,
     imageSection,
     image
 ) {
@@ -1852,7 +2655,7 @@ async function tryWikipediaImage(
         if (!response.ok) {
 
             throw new Error(
-                "Wikipedia image unavailable"
+                "Wikipedia unavailable"
             );
 
         }
@@ -1890,23 +2693,20 @@ async function tryWikipediaImage(
                 data.originalimage.source;
 
 
-            return;
+        } else {
+
+            imageSection.style.display =
+                "none";
 
         }
-
-
-        imageSection.style.display =
-            "none";
 
     }
 
     catch (error) {
 
         console.log(
-            "No university image found:",
-            error
+            "No university image available."
         );
-
 
         imageSection.style.display =
             "none";
@@ -1933,7 +2733,9 @@ searchInput.addEventListener(
         );
 
 
-        if (query.length < 3) {
+        if (
+            query.length < 3
+        ) {
 
             suggestions.style.display =
                 "none";
@@ -1942,11 +2744,6 @@ searchInput.addEventListener(
 
         }
 
-
-        /*
-           Small delay prevents unnecessary
-           searching while typing.
-        */
 
         searchTimer =
             setTimeout(
@@ -1963,7 +2760,7 @@ searchInput.addEventListener(
                     );
 
                 },
-                120
+                100
             );
 
     }
@@ -1988,7 +2785,9 @@ searchInput.addEventListener(
                 );
 
 
-            if (matches.length > 0) {
+            if (
+                matches.length
+            ) {
 
                 suggestions.style.display =
                     "none";
@@ -2006,7 +2805,7 @@ searchInput.addEventListener(
 
 
 /* ==========================================================
-   CLOSE AUTOCOMPLETE
+   CLOSE SUGGESTIONS
 ========================================================== */
 
 document.addEventListener(
