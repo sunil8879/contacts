@@ -4749,95 +4749,212 @@ loadUniversities();
 
 <script>
 /* ============================================================
-   SHOW EXACT UNIVERSITY NAME BESIDE THE MAP LOCATION POINTER
-   Paste this entire block immediately before </body>
+   MAP = EXACT ADDRESS FROM WORLD_UNIVERSITIES_ECTS.json
+   Uses the JSON address itself for geocoding.
+   Does NOT invent coordinates or use the university name.
+   Paste immediately before </body>
    ============================================================ */
 
 (function () {
 
-    function addUniversityNameToMap() {
-        if (!map || !marker || !selectedUniversity) {
-            setTimeout(addUniversityNameToMap, 300);
-            return;
+    let addressRequestNumber = 0;
+
+    async function showJsonAddressOnMap() {
+
+        if (!selectedUniversity || !map) return;
+
+        const address = String(selectedUniversity.address || "").trim();
+
+        if (!address) return;
+
+        const requestNumber = ++addressRequestNumber;
+
+        /* Use ONLY the address stored in the JSON */
+        const query = encodeURIComponent(address);
+
+        try {
+
+            const url =
+                "https://nominatim.openstreetmap.org/search" +
+                "?format=jsonv2" +
+                "&limit=1" +
+                "&addressdetails=1" +
+                "&q=" + query;
+
+            const response = await fetch(url, {
+                cache: "no-store"
+            });
+
+            if (!response.ok) return;
+
+            const results = await response.json();
+
+            /* Ignore an old request if the user selected another university */
+            if (requestNumber !== addressRequestNumber) return;
+
+            if (!Array.isArray(results) || !results.length) {
+                console.warn(
+                    "JSON ADDRESS COULD NOT BE LOCATED:",
+                    address
+                );
+                return;
+            }
+
+            const place = results[0];
+
+            const lat = parseFloat(place.lat);
+            const lon = parseFloat(place.lon);
+
+            if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+                console.warn(
+                    "INVALID COORDINATES FOR JSON ADDRESS:",
+                    address
+                );
+                return;
+            }
+
+            /*
+             * The coordinates below come from geocoding the actual
+             * address contained in WORLD_UNIVERSITIES_ECTS.json.
+             */
+
+            map.setView([lat, lon], 16, {
+                animate: true
+            });
+
+            /* Remove the old marker */
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            /* Create a NEW marker at the geocoded JSON address */
+            marker = L.marker([lat, lon]).addTo(map);
+
+            /*
+             * Show the ACTUAL JSON address in the map popup.
+             * Nothing is fabricated here.
+             */
+            marker.bindPopup(
+                '<div style="' +
+                    'font-family:Arial,Helvetica,sans-serif;' +
+                    'font-size:14px;' +
+                    'line-height:1.5;' +
+                    'min-width:240px;' +
+                '">' +
+
+                    '<div style="' +
+                        'font-weight:700;' +
+                        'font-size:15px;' +
+                        'margin-bottom:8px;' +
+                    '">' +
+                        escapeMapText(selectedUniversity.name || "") +
+                    '</div>' +
+
+                    '<div style="' +
+                        'border-top:1px solid #ccc;' +
+                        'padding-top:7px;' +
+                    '">' +
+                        escapeMapText(address) +
+                    '</div>' +
+
+                '</div>'
+            );
+
+            marker.openPopup();
+
+            /* Update the existing map status */
+            const status = document.getElementById("mapStatus");
+
+            if (status) {
+                status.textContent =
+                    "Location based on the address in the university JSON";
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "ADDRESS GEOCODING FAILED:",
+                address,
+                error
+            );
         }
+    }
 
-        const exactName = selectedUniversity.name;
 
-        if (!exactName) return;
+    /* Safely display JSON text inside the Leaflet popup */
+    function escapeMapText(value) {
 
-        /* Remove any previous university-name label */
-        if (marker._universityNameTooltip) {
-            marker.unbindTooltip();
-            marker._universityNameTooltip = null;
-        }
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
-        /* Add the EXACT name from WORLD_UNIVERSITIES_ECTS.json */
-        marker.bindTooltip(exactName, {
-            permanent: true,
-            direction: "top",
-            offset: [0, -10],
-            opacity: 1,
-            className: "university-map-name"
+
+    /*
+     * SEARCH BUTTON
+     * Wait for the original searchUniversity() to finish,
+     * then replace its map position with the JSON-address position.
+     */
+    const searchButton = document.getElementById("searchBtn");
+
+    if (searchButton) {
+
+        searchButton.addEventListener("click", function () {
+
+            setTimeout(function () {
+                showJsonAddressOnMap();
+            }, 1200);
+
         });
 
-        marker._universityNameTooltip = true;
     }
 
-    /* Run whenever the selected university changes */
-    const originalDisplayUniversity = window.displayUniversity;
 
-    if (typeof originalDisplayUniversity === "function") {
-        window.displayUniversity = function (university) {
-            const result = originalDisplayUniversity.apply(this, arguments);
+    /*
+     * ENTER KEY IN SEARCH BOX
+     */
+    const universityInput =
+        document.getElementById("universityInput");
 
-            setTimeout(addUniversityNameToMap, 100);
+    if (universityInput) {
 
-            return result;
-        };
+        universityInput.addEventListener("keydown", function (event) {
+
+            if (event.key === "Enter") {
+
+                setTimeout(function () {
+                    showJsonAddressOnMap();
+                }, 1200);
+
+            }
+
+        });
+
     }
 
-    /* Also keep checking briefly because the map/marker is created
-       asynchronously by locateUniversity() */
-    let checks = 0;
 
-    function checkMap() {
-        checks++;
+    /*
+     * AUTOCOMPLETE SELECTION
+     * If a university is selected directly from autocomplete,
+     * geocode its JSON address after the original search runs.
+     */
+    const autocomplete =
+        document.getElementById("autocomplete");
 
-        if (map && marker && selectedUniversity) {
-            addUniversityNameToMap();
-            return;
-        }
+    if (autocomplete) {
 
-        if (checks < 40) {
-            setTimeout(checkMap, 250);
-        }
+        autocomplete.addEventListener("click", function () {
+
+            setTimeout(function () {
+                showJsonAddressOnMap();
+            }, 1200);
+
+        });
+
     }
-
-    checkMap();
-
-    /* Styling for the university name displayed beside the marker */
-    const style = document.createElement("style");
-
-    style.textContent = `
-        .university-map-name {
-            background: #000 !important;
-            color: #fff !important;
-            border: 2px solid #00e6c3 !important;
-            border-radius: 6px !important;
-            padding: 7px 11px !important;
-            font-family: Arial, Helvetica, sans-serif !important;
-            font-size: 13px !important;
-            font-weight: 700 !important;
-            white-space: nowrap !important;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.35) !important;
-        }
-
-        .university-map-name:before {
-            border-top-color: #000 !important;
-        }
-    `;
-
-    document.head.appendChild(style);
 
 })();
 </script>
