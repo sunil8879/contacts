@@ -579,10 +579,6 @@ body{
 <main class="main">
 
 
-<!-- =========================================================
-     LEFT PANEL
-========================================================= -->
-
 <aside class="left-panel">
 
     <div class="panel-label">
@@ -664,10 +660,6 @@ body{
 
 
 
-<!-- =========================================================
-     RIGHT PANEL
-========================================================= -->
-
 <section class="right-panel">
 
 
@@ -737,10 +729,6 @@ body{
     <div class="result-grid">
 
 
-        <!-- =================================================
-             UNIVERSITY PHOTO
-        ================================================== -->
-
         <div class="photo-card">
 
             <div class="photo-container">
@@ -786,10 +774,6 @@ body{
 
 
 
-        <!-- =================================================
-             COUNTRY
-        ================================================== -->
-
         <div class="info-card">
 
             <h3>
@@ -805,10 +789,6 @@ body{
         </div>
 
 
-
-        <!-- =================================================
-             FOUNDED
-        ================================================== -->
 
         <div class="info-card">
 
@@ -826,10 +806,6 @@ body{
 
 
 
-        <!-- =================================================
-             ADDRESS
-        ================================================== -->
-
         <div class="info-card">
 
             <h3>
@@ -846,10 +822,6 @@ body{
 
 
 
-        <!-- =================================================
-             WEBSITE
-        ================================================== -->
-
         <div class="info-card">
 
             <h3>
@@ -865,10 +837,6 @@ body{
         </div>
 
 
-
-        <!-- =================================================
-             MAP
-        ================================================== -->
 
         <div class="map-card">
 
@@ -1260,8 +1228,6 @@ function normaliseCountry(value){
 
 /* =========================================================
    COUNTRY FROM MAIN DATABASE
-
-   ABSOLUTE PRIORITY
 ========================================================= */
 
 function countryFromExistingField(
@@ -1464,8 +1430,7 @@ function countryFromUniversityName(
 
 /* =========================================================
    GET COUNTRY
-
-   MAIN JSON ALWAYS WINS.
+   MAIN DATABASE ALWAYS WINS
 ========================================================= */
 
 function getCountry(
@@ -1589,8 +1554,6 @@ function getWebsite(
 
 /* =========================================================
    UNIVERSITY NAME NORMALISATION
-
-   IMPORTANT FOR WORLD_UNIVERSITIES.JSON
 ========================================================= */
 
 function normalizeUniversityName(
@@ -1614,10 +1577,6 @@ function normalizeUniversityName(
         "university"
     )
     .replace(
-        /\buniversity of\b/g,
-        "university"
-    )
-    .replace(
         /\s+/g,
         " "
     )
@@ -1629,14 +1588,13 @@ function normalizeUniversityName(
 /* =========================================================
    GET FOUNDED DATE
 
-   YOUR WORLD_UNIVERSITIES.JSON USES:
-
+   WORLD_UNIVERSITIES.JSON:
    UNIVERSITY
    COUNTRY
    FOUNDED
    WEBSITE
 
-   FOUNDED IS THEREFORE CHECKED FIRST.
+   Handles NaN / null / empty values.
 ========================================================= */
 
 function getFoundedField(
@@ -1654,106 +1612,41 @@ function getFoundedField(
 
 
     /*
-       ACTUAL FIELD IN YOUR DATABASE
+       FOUNDED is the primary field.
     */
 
-    const primaryFields = [
-
-        record.FOUNDED,
-        record.Founded,
-        record.founded
-
-    ];
+    const value =
+        record.FOUNDED;
 
 
-    for(
-        const value
-        of primaryFields
+    if(
+        value === undefined ||
+        value === null ||
+        value === "" ||
+        String(value).trim().toLowerCase() === "nan" ||
+        String(value).trim().toLowerCase() === "null" ||
+        String(value).trim().toLowerCase() === "undefined"
     ){
 
-        if(
-            value !== undefined &&
-            value !== null &&
-            String(value).trim() !== "" &&
-            String(value).toLowerCase() !== "null" &&
-            String(value).toLowerCase() !== "undefined"
-        ){
-
-            return String(
-                value
-            ).trim();
-
-        }
+        return "";
 
     }
 
 
-    /*
-       Other possible spellings
-    */
-
-    const otherFields = [
-
-        record.founded_date,
-        record.foundedDate,
-
-        record.date_founded,
-        record.dateFounded,
-
-        record.established,
-        record.ESTABLISHED,
-
-        record.established_date,
-        record.establishedDate,
-
-        record.year_founded,
-        record.yearFounded,
-
-        record.year_established,
-        record.yearEstablished,
-
-        record.foundation_year,
-        record.foundationYear,
-
-        record.creation_date,
-        record.creationDate
-
-    ];
-
-
-    for(
-        const value
-        of otherFields
-    ){
-
-        if(
-            value !== undefined &&
-            value !== null &&
-            String(value).trim() !== "" &&
-            String(value).toLowerCase() !== "null"
-        ){
-
-            return String(
-                value
-            ).trim();
-
-        }
-
-    }
-
-
-    return "";
+    return String(
+        value
+    ).trim();
 
 }
 
 
 /* =========================================================
-   FIND FOUNDED UNIVERSITY
+   FIND FOUNDED DATA
 
-   PRIORITY:
+   MATCHING ORDER:
 
    1. ID
-   2. EXACT NORMALISED NAME
+   2. UNIVERSITY NAME
    3. WEBSITE
 ========================================================= */
 
@@ -1798,7 +1691,6 @@ function findFoundedData(
                         record.id
                     ) ===
                     targetID
-
             );
 
 
@@ -1832,10 +1724,6 @@ function findFoundedData(
 
 
     if(targetName){
-
-        /*
-           FIRST EXACT MATCH
-        */
 
         const byName =
             foundedUniversities.find(
@@ -1897,82 +1785,6 @@ function findFoundedData(
             const founded =
                 getFoundedField(
                     byName
-                );
-
-
-            if(founded){
-
-                return founded;
-
-            }
-
-        }
-
-
-        /*
-           SECOND:
-           Match names where one side has
-           minor punctuation differences.
-        */
-
-        const byLooseName =
-            foundedUniversities.find(
-                record => {
-
-                    if(
-                        !record ||
-                        typeof record !== "object"
-                    ){
-
-                        return false;
-
-                    }
-
-
-                    const possibleName =
-
-                        record.UNIVERSITY ||
-
-                        record.University ||
-
-                        record.university ||
-
-                        record.name ||
-
-                        record.Name ||
-
-                        "";
-
-
-                    if(
-                        !possibleName
-                    ){
-
-                        return false;
-
-                    }
-
-
-                    const candidate =
-                        normalizeUniversityName(
-                            possibleName
-                        );
-
-
-                    return (
-                        candidate ===
-                        targetName
-                    );
-
-                }
-            );
-
-
-        if(byLooseName){
-
-            const founded =
-                getFoundedField(
-                    byLooseName
                 );
 
 
@@ -2061,11 +1873,9 @@ function findFoundedData(
 
 
                     return (
-
                         cleaned &&
                         cleaned ===
                         targetWebsite
-
                     );
 
                 }
@@ -2097,16 +1907,23 @@ function findFoundedData(
 
 
 /* =========================================================
-   LOAD MAIN DATABASE
+   LOAD DATABASES
 ========================================================= */
 
 async function loadUniversities(){
+
+    /* -------------------------------------------------------
+       MAIN DATABASE
+    ------------------------------------------------------- */
 
     try{
 
         const response =
             await fetch(
-                UNIVERSITY_FILE
+                UNIVERSITY_FILE,
+                {
+                    cache:"no-store"
+                }
             );
 
 
@@ -2114,7 +1931,9 @@ async function loadUniversities(){
 
             throw new Error(
                 "Could not load " +
-                UNIVERSITY_FILE
+                UNIVERSITY_FILE +
+                ". HTTP " +
+                response.status
             );
 
         }
@@ -2154,20 +1973,36 @@ async function loadUniversities(){
         );
 
 
-        console.error(error);
+        console.error(
+            error
+        );
 
     }
 
 
     /* -------------------------------------------------------
-       LOAD WORLD_UNIVERSITIES.JSON
+       FOUNDED DATABASE
+
+       IMPORTANT:
+       DO NOT USE response.json() HERE.
+
+       WORLD_UNIVERSITIES.json contains bare NaN
+       values, which are invalid JSON.
+
+       Therefore:
+       1. Read as text.
+       2. Replace NaN with null.
+       3. JSON.parse().
     ------------------------------------------------------- */
 
     try{
 
         const response =
             await fetch(
-                FOUNDED_FILE
+                FOUNDED_FILE,
+                {
+                    cache:"no-store"
+                }
             );
 
 
@@ -2175,23 +2010,103 @@ async function loadUniversities(){
 
             throw new Error(
                 "Could not load " +
-                FOUNDED_FILE
+                FOUNDED_FILE +
+                ". HTTP " +
+                response.status
             );
 
         }
 
 
-        foundedUniversities =
-            await response.json();
+        let foundedText =
+            await response.text();
 
+
+        /*
+           Convert every bare NaN into valid JSON null.
+
+           Example:
+
+           "COUNTRY": NaN
+
+           becomes:
+
+           "COUNTRY": null
+        */
+
+        foundedText =
+            foundedText.replace(
+                /\bNaN\b/g,
+                "null"
+            );
+
+
+        let foundedData =
+            JSON.parse(
+                foundedText
+            );
+
+
+        /*
+           Support:
+
+           [
+               {...}
+           ]
+
+           OR:
+
+           {
+               "data":[...]
+           }
+
+           OR:
+
+           {
+               "records":[...]
+           }
+        */
 
         if(
-            !Array.isArray(
-                foundedUniversities
+            Array.isArray(
+                foundedData
             )
         ){
 
-            foundedUniversities = [];
+            foundedUniversities =
+                foundedData;
+
+        }
+        else if(
+            foundedData &&
+            Array.isArray(
+                foundedData.data
+            )
+        ){
+
+            foundedUniversities =
+                foundedData.data;
+
+        }
+        else if(
+            foundedData &&
+            Array.isArray(
+                foundedData.records
+            )
+        ){
+
+            foundedUniversities =
+                foundedData.records;
+
+        }
+        else{
+
+            foundedUniversities =
+                [];
+
+            throw new Error(
+                "WORLD_UNIVERSITIES.json does not contain a valid university array."
+            );
 
         }
 
@@ -2228,7 +2143,8 @@ async function loadUniversities(){
     }
     catch(error){
 
-        foundedUniversities = [];
+        foundedUniversities =
+            [];
 
         console.warn(
             "Founded database unavailable:",
@@ -2626,12 +2542,6 @@ function displayUniversity(
             university
         );
 
-
-    /*
-       IMPORTANT:
-       This now reads FOUNDED from
-       WORLD_UNIVERSITIES.json.
-    */
 
     const founded =
         findFoundedData(
@@ -3276,11 +3186,6 @@ async function locateUniversity(
     initialiseMap();
 
 
-    /*
-       If the university database already contains
-       coordinates, ALWAYS use those.
-    */
-
     const direct =
         getDirectCoordinates(
             university
@@ -3323,13 +3228,6 @@ async function locateUniversity(
             university.city
         );
 
-
-    /*
-       IMPORTANT:
-       Search using the database's own information.
-
-       Do NOT use a generic country-only search.
-    */
 
     const queries = [
 
@@ -3374,14 +3272,6 @@ async function locateUniversity(
 
 
         if(location){
-
-            /*
-               We use the geocoder ONLY for
-               coordinates.
-
-               We DO NOT replace the university's
-               database address with this address.
-            */
 
             showMap(
                 parseFloat(
@@ -3589,16 +3479,6 @@ async function geocodeNominatim(
             data[0];
 
 
-        /*
-           Basic safety check:
-           if Nominatim gives a country that is
-           obviously different from our database
-           country, reject it.
-
-           This helps prevent cases such as a
-           university being sent to the USA.
-        */
-
         const expectedCountry =
             getCountry(
                 selectedUniversity ||
@@ -3627,14 +3507,6 @@ async function geocodeNominatim(
                 returnedCountry
                     .toLowerCase();
 
-
-            /*
-               Only reject if neither country
-               name contains the other.
-
-               This handles names such as:
-               United States / United States of America
-            */
 
             if(
                 !(
@@ -3686,10 +3558,6 @@ async function geocodeNominatim(
 
 /* =========================================================
    SHOW MAP
-
-   IMPORTANT:
-   POPUP USES DATABASE ADDRESS,
-   NOT OSM'S RETURNED ADDRESS.
 ========================================================= */
 
 function showMap(
@@ -3748,11 +3616,6 @@ function showMap(
             university.name
         );
 
-
-    /*
-       This is deliberately the SAME address
-       shown in the Address card.
-    */
 
     marker.bindPopup(
 
@@ -4053,29 +3916,6 @@ initialiseMap();
 
 loadUniversities();
 
-</script>
-
-
-<script>
-/* FIX FOUNDED DATE: HANDLE NaN / NULL / EMPTY VALUES */
-function getFoundedField(record) {
-    if (!record) return "Not available";
-
-    const value = record.FOUNDED;
-
-    if (
-        value === undefined ||
-        value === null ||
-        value === "" ||
-        (typeof value === "number" && Number.isNaN(value)) ||
-        String(value).trim().toLowerCase() === "nan" ||
-        String(value).trim().toLowerCase() === "null"
-    ) {
-        return "Not available";
-    }
-
-    return String(value).trim();
-}
 </script>
 
 </body>
