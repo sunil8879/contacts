@@ -1,6 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -8,7 +9,6 @@
 
 <title>CONTACTS OF GLOBAL UNIVERSITIES</title>
 
-<!-- LEAFLET MAP -->
 <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -22,7 +22,6 @@
     --black:#050505;
     --white:#ffffff;
     --grey:#f1f5f5;
-    --dark-grey:#777;
 }
 
 *{
@@ -173,10 +172,6 @@ body{
     font-size:14px;
 }
 
-.autocomplete-item:last-child{
-    border-bottom:0;
-}
-
 .autocomplete-item:hover{
     background:var(--aqua);
 }
@@ -291,7 +286,7 @@ body{
 
 
 /* =========================================================
-   UNIVERSITY PHOTO
+   PHOTO
 ========================================================= */
 
 .photo-card{
@@ -421,11 +416,6 @@ body{
     height:430px;
 }
 
-
-/* =========================================================
-   MAP STATUS
-========================================================= */
-
 .map-status{
     padding:9px 15px;
     background:#f7ffff;
@@ -533,6 +523,7 @@ body{
     #map{
         height:350px;
     }
+
 }
 
 @media(max-width:500px){
@@ -564,15 +555,12 @@ body{
 }
 
 </style>
+
 </head>
 
 
 <body>
 
-
-<!-- =========================================================
-     HEADER
-========================================================= -->
 
 <header class="header">
 
@@ -588,349 +576,335 @@ body{
 
 
 
-<!-- =========================================================
-     MAIN
-========================================================= -->
-
 <main class="main">
 
 
-    <!-- =====================================================
-         LEFT
-    ====================================================== -->
+<!-- =========================================================
+     LEFT PANEL
+========================================================= -->
 
-    <aside class="left-panel">
+<aside class="left-panel">
 
-        <div class="panel-label">
-            UNIVERSITY SEARCH
-        </div>
+    <div class="panel-label">
+        UNIVERSITY SEARCH
+    </div>
 
-        <h2>Find a University</h2>
+    <h2>Find a University</h2>
 
-        <div class="intro">
+    <div class="intro">
 
-            Search for a university and view its photograph,
-            country, full address, official website, founded date
-            and location on the global map.
+        Search for a university and view its photograph,
+        country, full address, founded date, official website
+        and location on the global map.
 
-        </div>
-
-
-        <div class="search-box">
-
-            <label for="universityInput">
-                UNIVERSITY NAME
-            </label>
-
-            <input
-                type="text"
-                id="universityInput"
-                placeholder="Type at least 3 letters..."
-                autocomplete="off"
-            >
-
-            <div
-                id="autocomplete"
-                class="autocomplete">
-            </div>
-
-        </div>
+    </div>
 
 
-        <div class="buttons">
+    <div class="search-box">
 
-            <button
-                class="btn btn-search"
-                id="searchBtn">
-                SEARCH
-            </button>
+        <label for="universityInput">
+            UNIVERSITY NAME
+        </label>
 
-            <button
-                class="btn btn-clear"
-                id="clearBtn">
-                CLEAR
-            </button>
-
-        </div>
-
-
-        <div class="tip">
-
-            <strong>HOW IT WORKS</strong>
-            <br><br>
-
-            Type at least <strong>3 letters</strong> of a
-            university name.
-
-            <br><br>
-
-            Select the university from the suggestions
-            and press SEARCH.
-
-            <br><br>
-
-            The university's photograph, country, address,
-            website, founded date and geographical location
-            will then appear on the right.
-
-        </div>
-
-    </aside>
-
-
-
-    <!-- =====================================================
-         RIGHT
-    ====================================================== -->
-
-    <section class="right-panel">
-
+        <input
+            type="text"
+            id="universityInput"
+            placeholder="Type at least 3 letters..."
+            autocomplete="off"
+        >
 
         <div
-            id="loading"
-            class="loading">
+            id="autocomplete"
+            class="autocomplete">
+        </div>
 
-            <div class="loader"></div>
+    </div>
 
-            <strong>
-                Finding university information...
-            </strong>
 
-            <div
-                style="margin-top:6px;color:#777;font-size:12px;">
+    <div class="buttons">
 
-                Finding photograph, founded date and location
+        <button
+            class="btn btn-search"
+            id="searchBtn">
+            SEARCH
+        </button>
+
+        <button
+            class="btn btn-clear"
+            id="clearBtn">
+            CLEAR
+        </button>
+
+    </div>
+
+
+    <div class="tip">
+
+        <strong>HOW IT WORKS</strong>
+
+        <br><br>
+
+        Type at least <strong>3 letters</strong>
+        of a university name.
+
+        <br><br>
+
+        Select the university from the suggestions
+        and press SEARCH.
+
+        <br><br>
+
+        The university's photograph, country,
+        address, founded date, official website
+        and geographical location will appear on the right.
+
+    </div>
+
+</aside>
+
+
+
+<!-- =========================================================
+     RIGHT PANEL
+========================================================= -->
+
+<section class="right-panel">
+
+
+<div
+    id="loading"
+    class="loading">
+
+    <div class="loader"></div>
+
+    <strong>
+        Finding university information...
+    </strong>
+
+    <div
+        style="margin-top:6px;color:#777;font-size:12px;">
+
+        Finding photograph, founded date and location
+
+    </div>
+
+</div>
+
+
+
+<div
+    id="error"
+    class="error">
+</div>
+
+
+
+<div
+    id="welcome"
+    class="welcome">
+
+    <div class="welcome-inner">
+
+        <div class="welcome-icon">
+            🌍
+        </div>
+
+        <h2>
+            GLOBAL UNIVERSITY DIRECTORY
+        </h2>
+
+        <p>
+
+            Search for a university from the panel
+            on the left.
+
+            The university's photograph, country,
+            address, founded date, official website
+            and geographical location will appear here.
+
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<div
+    id="result"
+    class="result">
+
+    <div class="result-grid">
+
+
+        <!-- =================================================
+             UNIVERSITY PHOTO
+        ================================================== -->
+
+        <div class="photo-card">
+
+            <div class="photo-container">
+
+                <img
+                    id="universityImage"
+                    alt="University photograph"
+                >
+
+                <div
+                    id="imagePlaceholder"
+                    class="image-placeholder">
+
+                    <div class="big">
+                        🏛️
+                    </div>
+
+                    <strong>
+                        University photograph not available
+                    </strong>
+
+                    <div
+                        style="margin-top:7px;font-size:12px;">
+
+                        No suitable public photograph was found.
+
+                    </div>
+
+                </div>
 
             </div>
 
-        </div>
 
+            <div class="photo-caption">
 
-        <div
-            id="error"
-            class="error">
+                <strong id="resultName">
+                    University Name
+                </strong>
+
+            </div>
+
         </div>
 
 
 
         <!-- =================================================
-             WELCOME
+             COUNTRY
         ================================================== -->
 
-        <div
-            id="welcome"
-            class="welcome">
+        <div class="info-card">
 
-            <div class="welcome-inner">
+            <h3>
+                Country
+            </h3>
 
-                <div class="welcome-icon">
-                    🌍
-                </div>
+            <div
+                id="resultCountry"
+                class="info-value">
+                —
+            </div>
 
-                <h2>
-                    GLOBAL UNIVERSITY DIRECTORY
-                </h2>
+        </div>
+
+
+
+        <!-- =================================================
+             FOUNDED
+        ================================================== -->
+
+        <div class="info-card">
+
+            <h3>
+                Founded
+            </h3>
+
+            <div
+                id="resultFounded"
+                class="info-value">
+                —
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             ADDRESS
+        ================================================== -->
+
+        <div class="info-card">
+
+            <h3>
+                Full Address
+            </h3>
+
+            <div
+                id="resultAddress"
+                class="info-value">
+                —
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             WEBSITE
+        ================================================== -->
+
+        <div class="info-card">
+
+            <h3>
+                Official Website
+            </h3>
+
+            <div
+                id="resultWebsite"
+                class="info-value">
+                —
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             MAP
+        ================================================== -->
+
+        <div class="map-card">
+
+            <div class="map-header">
+
+                <h3>
+                    UNIVERSITY LOCATION
+                </h3>
 
                 <p>
-
-                    Search for a university from the panel
-                    on the left.
-
-                    The university's photograph, country,
-                    address, founded date, official website
-                    and geographical location will appear here.
-
+                    Location of the selected university on the global map
                 </p>
 
             </div>
 
-        </div>
+            <div id="map"></div>
 
+            <div
+                id="mapStatus"
+                class="map-status">
 
-
-        <!-- =================================================
-             RESULT
-        ================================================== -->
-
-        <div
-            id="result"
-            class="result">
-
-            <div class="result-grid">
-
-
-                <!-- =========================================
-                     UNIVERSITY PHOTO
-                ========================================== -->
-
-                <div class="photo-card">
-
-                    <div class="photo-container">
-
-                        <img
-                            id="universityImage"
-                            alt="University photograph"
-                        >
-
-                        <div
-                            id="imagePlaceholder"
-                            class="image-placeholder">
-
-                            <div class="big">
-                                🏛️
-                            </div>
-
-                            <strong>
-                                University photograph not available
-                            </strong>
-
-                            <div
-                                style="margin-top:7px;font-size:12px;">
-
-                                No suitable public photograph was found.
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="photo-caption">
-
-                        <strong id="resultName">
-                            University Name
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- =========================================
-                     COUNTRY
-                ========================================== -->
-
-                <div class="info-card">
-
-                    <h3>
-                        Country
-                    </h3>
-
-                    <div
-                        id="resultCountry"
-                        class="info-value">
-                        —
-                    </div>
-
-                </div>
-
-
-
-                <!-- =========================================
-                     FOUNDED
-                ========================================== -->
-
-                <div class="info-card">
-
-                    <h3>
-                        Founded
-                    </h3>
-
-                    <div
-                        id="resultFounded"
-                        class="info-value">
-                        —
-                    </div>
-
-                </div>
-
-
-
-                <!-- =========================================
-                     ADDRESS
-                ========================================== -->
-
-                <div class="info-card">
-
-                    <h3>
-                        Full Address
-                    </h3>
-
-                    <div
-                        id="resultAddress"
-                        class="info-value">
-                        —
-                    </div>
-
-                </div>
-
-
-
-                <!-- =========================================
-                     WEBSITE
-                ========================================== -->
-
-                <div class="info-card">
-
-                    <h3>
-                        Official Website
-                    </h3>
-
-                    <div
-                        id="resultWebsite"
-                        class="info-value">
-                        —
-                    </div>
-
-                </div>
-
-
-
-                <!-- =========================================
-                     MAP
-                ========================================== -->
-
-                <div class="map-card">
-
-                    <div class="map-header">
-
-                        <h3>
-                            UNIVERSITY LOCATION
-                        </h3>
-
-                        <p>
-                            Global map location of the selected university
-                        </p>
-
-                    </div>
-
-                    <div id="map"></div>
-
-                    <div
-                        id="mapStatus"
-                        class="map-status">
-
-                        Waiting for university location...
-
-                    </div>
-
-                </div>
+                Waiting for university location...
 
             </div>
 
         </div>
 
-    </section>
+    </div>
+
+</div>
+
+</section>
 
 </main>
 
 
-
-<!-- =========================================================
-     FOOTER
-========================================================= -->
 
 <footer class="footer">
 
@@ -946,20 +920,15 @@ body{
 
 
 
-<!-- =========================================================
-     LEAFLET
-========================================================= -->
-
 <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
 </script>
 
 
-
 <script>
 
 /* =========================================================
-   FILES
+   DATABASE FILES
 ========================================================= */
 
 const UNIVERSITY_FILE =
@@ -982,11 +951,6 @@ let selectedUniversity = null;
 let map = null;
 
 let marker = null;
-
-
-/*
-   Cache geocoding results during the current session.
-*/
 
 const locationCache = new Map();
 
@@ -1200,6 +1164,7 @@ const COUNTRY_CODES = {
     "Yemen":"+967",
     "Zambia":"+260",
     "Zimbabwe":"+263"
+
 };
 
 
@@ -1234,6 +1199,7 @@ const COUNTRY_ALIASES = {
     "Viet Nam":"Vietnam",
 
     "United Republic of Tanzania":"Tanzania"
+
 };
 
 
@@ -1257,11 +1223,6 @@ function cleanText(value){
 
 /* =========================================================
    NORMALISE COUNTRY
-
-   IMPORTANT:
-   The JSON country's value gets PRIORITY.
-   It is NEVER overwritten by university-name
-   guessing if it already exists.
 ========================================================= */
 
 function normaliseCountry(value){
@@ -1273,71 +1234,39 @@ function normaliseCountry(value){
         return "";
     }
 
-
-    if(COUNTRY_ALIASES[text]){
+    if(
+        COUNTRY_ALIASES[text]
+    ){
         return COUNTRY_ALIASES[text];
     }
 
-
     const exact =
-        Object.keys(COUNTRY_CODES)
-            .find(
-                country =>
-                    country.toLowerCase() ===
-                    text.toLowerCase()
-            );
-
+        Object.keys(
+            COUNTRY_CODES
+        ).find(
+            country =>
+                country.toLowerCase() ===
+                text.toLowerCase()
+        );
 
     if(exact){
         return exact;
     }
 
-
-    /*
-       Handle uppercase country names,
-       e.g. AUSTRALIA.
-    */
-
-    const upper =
-        text.toUpperCase();
-
-
-    const upperMatch =
-        Object.keys(COUNTRY_CODES)
-            .find(
-                country =>
-                    country.toUpperCase() ===
-                    upper
-            );
-
-
-    if(upperMatch){
-        return upperMatch;
-    }
-
-
-    /*
-       Preserve the database's country name
-       rather than replacing it with a guess.
-    */
-
     return text;
+
 }
 
 
 /* =========================================================
-   GET COUNTRY FROM JSON
+   COUNTRY FROM MAIN DATABASE
 
-   THIS IS THE MOST IMPORTANT FIX.
-
-   If WORLD_UNIVERSITIES_ECTS.json says
-   AUSTRALIA, we use AUSTRALIA.
-
-   We DO NOT subsequently guess USA from
-   the university name.
+   ABSOLUTE PRIORITY
 ========================================================= */
 
-function countryFromExistingField(record){
+function countryFromExistingField(
+    record
+){
 
     const fields = [
 
@@ -1352,20 +1281,25 @@ function countryFromExistingField(record){
     ];
 
 
-    for(const value of fields){
+    for(
+        const value of fields
+    ){
 
-        const text =
-            cleanText(value);
+        if(
+            cleanText(value)
+        ){
 
-        if(text){
-
-            return normaliseCountry(text);
+            return normaliseCountry(
+                value
+            );
 
         }
+
     }
 
 
     return "";
+
 }
 
 
@@ -1373,17 +1307,25 @@ function countryFromExistingField(record){
    COUNTRY FROM ADDRESS
 ========================================================= */
 
-function countryFromAddress(address){
+function countryFromAddress(
+    address
+){
 
     if(!address){
         return "";
     }
 
     const text =
-        String(address).toLowerCase();
+        String(address)
+            .toLowerCase();
 
 
-    for(const country of Object.keys(COUNTRY_CODES)){
+    for(
+        const country
+        of Object.keys(
+            COUNTRY_CODES
+        )
+    ){
 
         if(
             text.includes(
@@ -1392,27 +1334,14 @@ function countryFromAddress(address){
         ){
 
             return country;
-        }
-    }
-
-
-    for(
-        const alias in COUNTRY_ALIASES
-    ){
-
-        if(
-            text.includes(
-                alias.toLowerCase()
-            )
-        ){
-
-            return COUNTRY_ALIASES[alias];
 
         }
+
     }
 
 
     return "";
+
 }
 
 
@@ -1420,12 +1349,13 @@ function countryFromAddress(address){
    COUNTRY FROM NAME
 ========================================================= */
 
-function countryFromUniversityName(name){
+function countryFromUniversityName(
+    name
+){
 
     if(!name){
         return "";
     }
-
 
     const text =
         name.toLowerCase();
@@ -1433,12 +1363,9 @@ function countryFromUniversityName(name){
 
     const clues = [
 
+        ["rmit","Australia"],
         ["australia","Australia"],
         ["australian","Australia"],
-        ["rmit","Australia"],
-        ["university of melbourne","Australia"],
-        ["university of sydney","Australia"],
-        ["monash university","Australia"],
 
         ["india","India"],
         ["indian institute","India"],
@@ -1509,45 +1436,47 @@ function countryFromUniversityName(name){
         ["university of nairobi","Kenya"],
         ["university of lagos","Nigeria"],
         ["university of ghana","Ghana"]
+
     ];
 
 
-    for(const clue of clues){
+    for(
+        const clue of clues
+    ){
 
         if(
-            text.includes(clue[0])
+            text.includes(
+                clue[0]
+            )
         ){
 
             return clue[1];
 
         }
+
     }
 
 
     return "";
+
 }
 
 
 /* =========================================================
    GET COUNTRY
 
-   PRIORITY:
-
-   1. JSON country
-   2. Address
-   3. Name
-
-   PHONE IS NO LONGER USED.
+   MAIN JSON ALWAYS WINS.
 ========================================================= */
 
-function getCountry(record){
-
-    /*
-       1. DATABASE COUNTRY HAS ABSOLUTE PRIORITY
-    */
+function getCountry(
+    record
+){
 
     const databaseCountry =
-        countryFromExistingField(record);
+        countryFromExistingField(
+            record
+        );
+
 
     if(databaseCountry){
 
@@ -1556,14 +1485,11 @@ function getCountry(record){
     }
 
 
-    /*
-       2. ADDRESS
-    */
-
     const addressCountry =
         countryFromAddress(
             record.address
         );
+
 
     if(addressCountry){
 
@@ -1572,13 +1498,10 @@ function getCountry(record){
     }
 
 
-    /*
-       3. UNIVERSITY NAME
-    */
-
     return countryFromUniversityName(
         record.name
     );
+
 }
 
 
@@ -1586,18 +1509,27 @@ function getCountry(record){
    ADDRESS
 ========================================================= */
 
-function getAddress(record){
+function getAddress(
+    record
+){
 
     let address =
-        cleanText(record.address);
+        cleanText(
+            record.address
+        );
+
 
     const postal =
-        cleanText(record.postal_code);
+        cleanText(
+            record.postal_code
+        );
 
 
     if(
         postal &&
-        !address.includes(postal)
+        !address.includes(
+            postal
+        )
     ){
 
         if(address){
@@ -1605,11 +1537,13 @@ function getAddress(record){
         }
 
         address += postal;
+
     }
 
 
     return address ||
         "Not available";
+
 }
 
 
@@ -1617,10 +1551,14 @@ function getAddress(record){
    WEBSITE
 ========================================================= */
 
-function getWebsite(record){
+function getWebsite(
+    record
+){
 
     let website =
-        cleanText(record.website);
+        cleanText(
+            record.website
+        );
 
 
     if(!website){
@@ -1629,111 +1567,85 @@ function getWebsite(record){
 
 
     if(
-        !website.startsWith("http://") &&
-        !website.startsWith("https://")
+        !website.startsWith(
+            "http://"
+        ) &&
+        !website.startsWith(
+            "https://"
+        )
     ){
 
         website =
-            "https://" + website;
+            "https://" +
+            website;
+
     }
 
 
     return website;
+
 }
 
 
 /* =========================================================
-   NORMALISE UNIVERSITY NAME FOR MATCHING
+   UNIVERSITY NAME NORMALISATION
+
+   IMPORTANT FOR WORLD_UNIVERSITIES.JSON
 ========================================================= */
 
-function normaliseUniversityName(name){
+function normalizeUniversityName(
+    name
+){
 
-    return cleanText(name)
-        .toLowerCase()
-        .replace(
-            /[^\p{L}\p{N}]+/gu,
-            " "
-        )
-        .replace(
-            /\s+/g,
-            " "
-        )
-        .trim();
+    return String(
+        name || ""
+    )
+    .toLowerCase()
+    .replace(
+        /&/g,
+        "and"
+    )
+    .replace(
+        /[.,'’"`]/g,
+        ""
+    )
+    .replace(
+        /\buniv\b/g,
+        "university"
+    )
+    .replace(
+        /\buniversity of\b/g,
+        "university"
+    )
+    .replace(
+        /\s+/g,
+        " "
+    )
+    .trim();
+
 }
 
 
 /* =========================================================
-   FOUNDED DATE FIELD DETECTOR
+   GET FOUNDED DATE
 
-   WORLD_UNIVERSITIES.json may use different
-   field names. We check all common possibilities.
+   YOUR WORLD_UNIVERSITIES.JSON USES:
+
+   UNIVERSITY
+   COUNTRY
+   FOUNDED
+   WEBSITE
+
+   FOUNDED IS THEREFORE CHECKED FIRST.
 ========================================================= */
 
-function getFoundedField(record){
-
-    if(!record){
-        return "";
-    }
-
-
-    const fields = [
-
-        "founded",
-        "founded_date",
-        "foundedDate",
-        "date_founded",
-        "dateFounded",
-        "established",
-        "established_date",
-        "establishedDate",
-        "year_founded",
-        "yearFounded",
-        "year_established",
-        "yearEstablished",
-        "foundation_year",
-        "foundationYear",
-        "creation_date",
-        "creationDate"
-
-    ];
-
-
-    for(const field of fields){
-
-        if(
-            record[field] !== undefined &&
-            record[field] !== null &&
-            String(record[field]).trim() !== ""
-        ){
-
-            return String(
-                record[field]
-            ).trim();
-
-        }
-    }
-
-
-    return "";
-}
-
-
-/* =========================================================
-   FIND FOUNDED DATA
-
-   MATCHING PRIORITY:
-
-   1. ID
-   2. UNIVERSITY NAME
-   3. WEBSITE
-========================================================= */
-
-function findFoundedData(university){
+function getFoundedField(
+    record
+){
 
     if(
-        !Array.isArray(
-            foundedUniversities
-        )
+        !record ||
+        typeof record !== "object"
     ){
 
         return "";
@@ -1742,79 +1654,342 @@ function findFoundedData(university){
 
 
     /*
-       1. ID MATCH
+       ACTUAL FIELD IN YOUR DATABASE
     */
+
+    const primaryFields = [
+
+        record.FOUNDED,
+        record.Founded,
+        record.founded
+
+    ];
+
+
+    for(
+        const value
+        of primaryFields
+    ){
+
+        if(
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== "" &&
+            String(value).toLowerCase() !== "null" &&
+            String(value).toLowerCase() !== "undefined"
+        ){
+
+            return String(
+                value
+            ).trim();
+
+        }
+
+    }
+
+
+    /*
+       Other possible spellings
+    */
+
+    const otherFields = [
+
+        record.founded_date,
+        record.foundedDate,
+
+        record.date_founded,
+        record.dateFounded,
+
+        record.established,
+        record.ESTABLISHED,
+
+        record.established_date,
+        record.establishedDate,
+
+        record.year_founded,
+        record.yearFounded,
+
+        record.year_established,
+        record.yearEstablished,
+
+        record.foundation_year,
+        record.foundationYear,
+
+        record.creation_date,
+        record.creationDate
+
+    ];
+
+
+    for(
+        const value
+        of otherFields
+    ){
+
+        if(
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== "" &&
+            String(value).toLowerCase() !== "null"
+        ){
+
+            return String(
+                value
+            ).trim();
+
+        }
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =========================================================
+   FIND FOUNDED UNIVERSITY
+
+   PRIORITY:
+
+   1. ID
+   2. EXACT NORMALISED NAME
+   3. WEBSITE
+========================================================= */
+
+function findFoundedData(
+    university
+){
+
+    if(
+        !Array.isArray(
+            foundedUniversities
+        ) ||
+        !foundedUniversities.length
+    ){
+
+        return "";
+
+    }
+
+
+    /* -------------------------------------------------------
+       1. ID MATCH
+    ------------------------------------------------------- */
 
     if(
         university.id !== undefined &&
         university.id !== null
     ){
 
-        const idString =
+        const targetID =
             String(
                 university.id
             );
 
 
-        const byId =
+        const byID =
             foundedUniversities.find(
                 record =>
+
+                    record &&
+                    record.id !== undefined &&
                     String(
                         record.id
-                    ) === idString
+                    ) ===
+                    targetID
+
             );
 
 
-        if(byId){
+        if(byID){
 
             const founded =
-                getFoundedField(byId);
+                getFoundedField(
+                    byID
+                );
+
 
             if(founded){
+
                 return founded;
+
             }
+
         }
+
     }
 
 
-    /*
-       2. NAME MATCH
-    */
+    /* -------------------------------------------------------
+       2. UNIVERSITY NAME MATCH
+    ------------------------------------------------------- */
 
     const targetName =
-        normaliseUniversityName(
+        normalizeUniversityName(
             university.name
         );
 
 
     if(targetName){
 
+        /*
+           FIRST EXACT MATCH
+        */
+
         const byName =
             foundedUniversities.find(
-                record =>
-                    normaliseUniversityName(
+                record => {
+
+                    if(
+                        !record ||
+                        typeof record !== "object"
+                    ){
+
+                        return false;
+
+                    }
+
+
+                    const possibleName =
+
+                        record.UNIVERSITY ||
+
+                        record.University ||
+
+                        record.university ||
+
                         record.name ||
-                        record.university_name ||
-                        record.universityName
-                    ) === targetName
+
+                        record.Name ||
+
+                        record.institution ||
+
+                        record.Institution ||
+
+                        "";
+
+
+                    if(
+                        !possibleName
+                    ){
+
+                        return false;
+
+                    }
+
+
+                    return (
+
+                        normalizeUniversityName(
+                            possibleName
+                        ) ===
+                        targetName
+
+                    );
+
+                }
             );
 
 
         if(byName){
 
             const founded =
-                getFoundedField(byName);
+                getFoundedField(
+                    byName
+                );
+
 
             if(founded){
+
                 return founded;
+
             }
+
         }
+
+
+        /*
+           SECOND:
+           Match names where one side has
+           minor punctuation differences.
+        */
+
+        const byLooseName =
+            foundedUniversities.find(
+                record => {
+
+                    if(
+                        !record ||
+                        typeof record !== "object"
+                    ){
+
+                        return false;
+
+                    }
+
+
+                    const possibleName =
+
+                        record.UNIVERSITY ||
+
+                        record.University ||
+
+                        record.university ||
+
+                        record.name ||
+
+                        record.Name ||
+
+                        "";
+
+
+                    if(
+                        !possibleName
+                    ){
+
+                        return false;
+
+                    }
+
+
+                    const candidate =
+                        normalizeUniversityName(
+                            possibleName
+                        );
+
+
+                    return (
+                        candidate ===
+                        targetName
+                    );
+
+                }
+            );
+
+
+        if(byLooseName){
+
+            const founded =
+                getFoundedField(
+                    byLooseName
+                );
+
+
+            if(founded){
+
+                return founded;
+
+            }
+
+        }
+
     }
 
 
-    /*
+    /* -------------------------------------------------------
        3. WEBSITE MATCH
-    */
+    ------------------------------------------------------- */
 
     const targetWebsite =
         cleanText(
@@ -1841,9 +2016,34 @@ function findFoundedData(university){
             foundedUniversities.find(
                 record => {
 
+                    if(
+                        !record ||
+                        typeof record !== "object"
+                    ){
+
+                        return false;
+
+                    }
+
+
                     const website =
+
+                        record.WEBSITE ||
+
+                        record.Website ||
+
+                        record.website ||
+
+                        record.URL ||
+
+                        record.url ||
+
+                        "";
+
+
+                    const cleaned =
                         cleanText(
-                            record.website
+                            website
                         )
                         .toLowerCase()
                         .replace(
@@ -1859,10 +2059,13 @@ function findFoundedData(university){
                             ""
                         );
 
+
                     return (
-                        website &&
-                        website ===
+
+                        cleaned &&
+                        cleaned ===
                         targetWebsite
+
                     );
 
                 }
@@ -1876,19 +2079,25 @@ function findFoundedData(university){
                     byWebsite
                 );
 
+
             if(founded){
+
                 return founded;
+
             }
+
         }
+
     }
 
 
     return "";
+
 }
 
 
 /* =========================================================
-   LOAD DATABASES
+   LOAD MAIN DATABASE
 ========================================================= */
 
 async function loadUniversities(){
@@ -1930,17 +2139,18 @@ async function loadUniversities(){
 
 
         console.log(
-            "University database loaded:",
+            "MAIN DATABASE:",
             universities.length
         );
 
 
-    }catch(error){
+    }
+    catch(error){
 
         showError(
             "Unable to load <strong>" +
             UNIVERSITY_FILE +
-            "</strong>. Make sure it is in the same folder as index.html."
+            "</strong>."
         );
 
 
@@ -1949,9 +2159,9 @@ async function loadUniversities(){
     }
 
 
-    /*
-       Founded database is loaded separately.
-    */
+    /* -------------------------------------------------------
+       LOAD WORLD_UNIVERSITIES.JSON
+    ------------------------------------------------------- */
 
     try{
 
@@ -1987,20 +2197,38 @@ async function loadUniversities(){
 
 
         console.log(
-            "Founded database loaded:",
+            "WORLD_UNIVERSITIES.JSON:",
             foundedUniversities.length
         );
 
 
-    }catch(error){
-
         /*
-           Do NOT stop the application if the
-           founded-date database is unavailable.
+           DEBUG INFORMATION
         */
 
-        foundedUniversities = [];
+        if(
+            foundedUniversities.length
+        ){
 
+            console.log(
+                "FIRST WORLD_UNIVERSITIES.JSON RECORD:",
+                foundedUniversities[0]
+            );
+
+            console.log(
+                "FIRST FOUNDED VALUE:",
+                getFoundedField(
+                    foundedUniversities[0]
+                )
+            );
+
+        }
+
+
+    }
+    catch(error){
+
+        foundedUniversities = [];
 
         console.warn(
             "Founded database unavailable:",
@@ -2038,7 +2266,12 @@ input.addEventListener(
                 .toLowerCase();
 
 
-        autocomplete.innerHTML = "";
+        autocomplete.innerHTML =
+            "";
+
+
+        selectedUniversity =
+            null;
 
 
         if(
@@ -2047,9 +2280,6 @@ input.addEventListener(
 
             autocomplete.style.display =
                 "none";
-
-            selectedUniversity =
-                null;
 
             return;
 
@@ -2069,7 +2299,10 @@ input.addEventListener(
                             query
                         )
                 )
-                .slice(0,30);
+                .slice(
+                    0,
+                    30
+                );
 
 
         if(
@@ -2077,6 +2310,7 @@ input.addEventListener(
         ){
 
             autocomplete.innerHTML =
+
                 `<div class="autocomplete-item">
                     No university found
                  </div>`;
@@ -2163,7 +2397,9 @@ input.addEventListener(
    ESCAPE HTML
 ========================================================= */
 
-function escapeHTML(value){
+function escapeHTML(
+    value
+){
 
     return String(
         value || ""
@@ -2193,7 +2429,7 @@ function escapeHTML(value){
 
 
 /* =========================================================
-   SEARCH
+   SEARCH BUTTON
 ========================================================= */
 
 document
@@ -2211,8 +2447,7 @@ input.addEventListener(
     function(event){
 
         if(
-            event.key ===
-            "Enter"
+            event.key === "Enter"
         ){
 
             event.preventDefault();
@@ -2224,6 +2459,10 @@ input.addEventListener(
     }
 );
 
+
+/* =========================================================
+   SEARCH UNIVERSITY
+========================================================= */
 
 async function searchUniversity(){
 
@@ -2246,10 +2485,6 @@ async function searchUniversity(){
     let university =
         selectedUniversity;
 
-
-    /*
-       Exact typed name.
-    */
 
     if(!university){
 
@@ -2282,10 +2517,6 @@ async function searchUniversity(){
                     query
             );
 
-
-        /*
-           Partial match fallback.
-        */
 
         if(!university){
 
@@ -2345,10 +2576,6 @@ async function searchUniversity(){
     );
 
 
-    /*
-       Image and location run independently.
-    */
-
     await Promise.allSettled([
 
         findUniversityImage(
@@ -2378,16 +2605,9 @@ function displayUniversity(
     const name =
         cleanText(
             university.name
-        )
-        ||
+        ) ||
         "University";
 
-
-    /*
-       IMPORTANT:
-       Country comes directly from JSON
-       before any fallback.
-    */
 
     const country =
         getCountry(
@@ -2407,10 +2627,32 @@ function displayUniversity(
         );
 
 
+    /*
+       IMPORTANT:
+       This now reads FOUNDED from
+       WORLD_UNIVERSITIES.json.
+    */
+
     const founded =
         findFoundedData(
             university
         );
+
+
+    console.log(
+        "UNIVERSITY:",
+        name
+    );
+
+    console.log(
+        "COUNTRY:",
+        country
+    );
+
+    console.log(
+        "FOUNDED:",
+        founded
+    );
 
 
     document
@@ -2480,7 +2722,8 @@ function displayUniversity(
 
         `;
 
-    }else{
+    }
+    else{
 
         websiteBox.textContent =
             "Not available";
@@ -2494,7 +2737,7 @@ function displayUniversity(
 
 
 /* =========================================================
-   IMAGE RESET
+   IMAGE
 ========================================================= */
 
 function resetImage(){
@@ -2525,10 +2768,6 @@ function resetImage(){
 
 }
 
-
-/* =========================================================
-   IMAGE SEARCH
-========================================================= */
 
 async function findUniversityImage(
     university
@@ -2566,7 +2805,8 @@ async function findUniversityImage(
 
 
     for(
-        const query of queries
+        const query
+        of queries
     ){
 
         try{
@@ -2589,10 +2829,10 @@ async function findUniversityImage(
 
             }
 
-        }catch(error){
+        }
+        catch(error){
 
             console.warn(
-                "Wikimedia search failed:",
                 error
             );
 
@@ -2600,10 +2840,6 @@ async function findUniversityImage(
 
     }
 
-
-    /*
-       Wikipedia fallback.
-    */
 
     try{
 
@@ -2624,10 +2860,10 @@ async function findUniversityImage(
 
         }
 
-    }catch(error){
+    }
+    catch(error){
 
         console.warn(
-            "Wikipedia image failed:",
             error
         );
 
@@ -2638,10 +2874,6 @@ async function findUniversityImage(
 
 }
 
-
-/* =========================================================
-   WIKIMEDIA
-========================================================= */
 
 async function searchWikimediaImage(
     query,
@@ -2666,7 +2898,9 @@ async function searchWikimediaImage(
 
 
     const response =
-        await fetch(url);
+        await fetch(
+            url
+        );
 
 
     if(
@@ -2832,9 +3066,6 @@ async function searchWikimediaImage(
                             info.thumburl ||
                             info.url,
 
-                        title:
-                            title,
-
                         score:
                             score
 
@@ -2864,10 +3095,6 @@ async function searchWikimediaImage(
 }
 
 
-/* =========================================================
-   WIKIPEDIA IMAGE
-========================================================= */
-
 async function searchWikipediaImage(
     name
 ){
@@ -2888,7 +3115,9 @@ async function searchWikipediaImage(
 
 
     const response =
-        await fetch(url);
+        await fetch(
+            url
+        );
 
 
     if(
@@ -2942,10 +3171,6 @@ async function searchWikipediaImage(
 }
 
 
-/* =========================================================
-   DISPLAY IMAGE
-========================================================= */
-
 function displayUniversityImage(
     imageURL,
     universityName
@@ -2968,7 +3193,6 @@ function displayUniversityImage(
 
             image.style.display =
                 "block";
-
 
             placeholder.style.display =
                 "none";
@@ -2996,7 +3220,48 @@ function displayUniversityImage(
 
 
 /* =========================================================
-   LOCATION
+   MAP
+========================================================= */
+
+function initialiseMap(){
+
+    if(map){
+        return;
+    }
+
+
+    map =
+        L.map(
+            "map",
+            {
+                worldCopyJump:true
+            }
+        );
+
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            maxZoom:19,
+
+            attribution:
+                '&copy; OpenStreetMap contributors'
+
+        }
+    )
+    .addTo(map);
+
+
+    map.setView(
+        [20,0],
+        2
+    );
+
+}
+
+
+/* =========================================================
+   LOCATION SEARCH
 ========================================================= */
 
 async function locateUniversity(
@@ -3008,25 +3273,26 @@ async function locateUniversity(
     );
 
 
+    initialiseMap();
+
+
     /*
-       FIRST:
-       If JSON already contains coordinates,
-       use them directly.
+       If the university database already contains
+       coordinates, ALWAYS use those.
     */
 
-    const directCoordinates =
+    const direct =
         getDirectCoordinates(
             university
         );
 
 
-    if(directCoordinates){
+    if(direct){
 
         showMap(
-            directCoordinates.lat,
-            directCoordinates.lon,
-            university.name,
-            "Location from university database"
+            direct.lat,
+            direct.lon,
+            university
         );
 
         return;
@@ -3034,15 +3300,15 @@ async function locateUniversity(
     }
 
 
-    const address =
-        getAddress(
-            university
-        );
-
-
     const name =
         cleanText(
             university.name
+        );
+
+
+    const address =
+        getAddress(
+            university
         );
 
 
@@ -3059,74 +3325,42 @@ async function locateUniversity(
 
 
     /*
-       Strongest queries first.
+       IMPORTANT:
+       Search using the database's own information.
+
+       Do NOT use a generic country-only search.
     */
 
-    const queries = [];
+    const queries = [
 
+        `${name}, ${address}, ${country}`,
 
-    if(
-        address &&
-        country
-    ){
+        `${name}, ${city}, ${country}`,
 
-        queries.push(
-            `${address}, ${country}`
-        );
+        `${name}, ${country}`,
 
-    }
+        `${address}, ${country}`
 
+    ];
 
-    if(
-        name &&
-        city &&
-        country
-    ){
-
-        queries.push(
-            `${name}, ${city}, ${country}`
-        );
-
-    }
-
-
-    if(
-        name &&
-        country
-    ){
-
-        queries.push(
-            `${name}, ${country}`
-        );
-
-    }
-
-
-    if(
-        city &&
-        country
-    ){
-
-        queries.push(
-            `${city}, ${country}`
-        );
-
-    }
-
-
-    /*
-       Remove duplicates.
-    */
 
     const uniqueQueries =
-        [...new Set(
-            queries
-        )];
+        [
+            ...new Set(
+                queries
+                    .map(
+                        q =>
+                            q
+                                .replace(
+                                    /,\s*,/g,
+                                    ","
+                                )
+                                .trim()
+                    )
+                    .filter(Boolean)
+            )
+        ];
 
-
-    /*
-       Try Nominatim first.
-    */
 
     for(
         const query
@@ -3141,6 +3375,14 @@ async function locateUniversity(
 
         if(location){
 
+            /*
+               We use the geocoder ONLY for
+               coordinates.
+
+               We DO NOT replace the university's
+               database address with this address.
+            */
+
             showMap(
                 parseFloat(
                     location.lat
@@ -3148,8 +3390,7 @@ async function locateUniversity(
                 parseFloat(
                     location.lon
                 ),
-                name,
-                location.display_name
+                university
             );
 
             return;
@@ -3158,43 +3399,6 @@ async function locateUniversity(
 
     }
 
-
-    /*
-       Second geocoder fallback.
-    */
-
-    for(
-        const query
-        of uniqueQueries
-    ){
-
-        const location =
-            await geocodeArcGIS(
-                query
-            );
-
-
-        if(location){
-
-            showMap(
-                location.lat,
-                location.lon,
-                name,
-                location.address
-            );
-
-            return;
-
-        }
-
-    }
-
-
-    /*
-       Last resort:
-       show a world map rather than
-       leaving a blank map.
-    */
 
     showMapUnavailable();
 
@@ -3231,6 +3435,7 @@ function getDirectCoordinates(
 
 
     let lat = null;
+
     let lon = null;
 
 
@@ -3242,7 +3447,9 @@ function getDirectCoordinates(
         if(
             record[field] !== undefined &&
             record[field] !== null &&
-            String(record[field]).trim() !== ""
+            String(
+                record[field]
+            ).trim() !== ""
         ){
 
             lat =
@@ -3265,7 +3472,9 @@ function getDirectCoordinates(
         if(
             record[field] !== undefined &&
             record[field] !== null &&
-            String(record[field]).trim() !== ""
+            String(
+                record[field]
+            ).trim() !== ""
         ){
 
             lon =
@@ -3290,8 +3499,8 @@ function getDirectCoordinates(
     ){
 
         return {
-            lat:lat,
-            lon:lon
+            lat,
+            lon
         };
 
     }
@@ -3303,7 +3512,7 @@ function getDirectCoordinates(
 
 
 /* =========================================================
-   NOMINATIM GEOCODING
+   NOMINATIM
 ========================================================= */
 
 async function geocodeNominatim(
@@ -3311,7 +3520,6 @@ async function geocodeNominatim(
 ){
 
     const cacheKey =
-        "nominatim:" +
         query.toLowerCase();
 
 
@@ -3332,9 +3540,17 @@ async function geocodeNominatim(
 
         const url =
             "https://nominatim.openstreetmap.org/search" +
+
             "?format=jsonv2" +
+
             "&limit=1" +
+
+            "&addressdetails=1" +
+
+            "&accept-language=en" +
+
             "&q=" +
+
             encodeURIComponent(
                 query
             );
@@ -3342,13 +3558,7 @@ async function geocodeNominatim(
 
         const response =
             await fetch(
-                url,
-                {
-                    headers:{
-                        "Accept":
-                            "application/json"
-                    }
-                }
+                url
             );
 
 
@@ -3379,6 +3589,78 @@ async function geocodeNominatim(
             data[0];
 
 
+        /*
+           Basic safety check:
+           if Nominatim gives a country that is
+           obviously different from our database
+           country, reject it.
+
+           This helps prevent cases such as a
+           university being sent to the USA.
+        */
+
+        const expectedCountry =
+            getCountry(
+                selectedUniversity ||
+                {}
+            );
+
+
+        if(
+            expectedCountry &&
+            result.address &&
+            result.address.country
+        ){
+
+            const returnedCountry =
+                normaliseCountry(
+                    result.address.country
+                );
+
+
+            const expected =
+                expectedCountry
+                    .toLowerCase();
+
+
+            const returned =
+                returnedCountry
+                    .toLowerCase();
+
+
+            /*
+               Only reject if neither country
+               name contains the other.
+
+               This handles names such as:
+               United States / United States of America
+            */
+
+            if(
+                !(
+                    returned.includes(
+                        expected
+                    ) ||
+                    expected.includes(
+                        returned
+                    )
+                )
+            ){
+
+                console.warn(
+                    "Rejected geocoding result:",
+                    result.address.country,
+                    "Expected:",
+                    expectedCountry
+                );
+
+                return null;
+
+            }
+
+        }
+
+
         locationCache.set(
             cacheKey,
             result
@@ -3387,7 +3669,8 @@ async function geocodeNominatim(
 
         return result;
 
-    }catch(error){
+    }
+    catch(error){
 
         console.warn(
             "Nominatim error:",
@@ -3402,177 +3685,17 @@ async function geocodeNominatim(
 
 
 /* =========================================================
-   ARCGIS FALLBACK GEOCODER
-========================================================= */
-
-async function geocodeArcGIS(
-    query
-){
-
-    const cacheKey =
-        "arcgis:" +
-        query.toLowerCase();
-
-
-    if(
-        locationCache.has(
-            cacheKey
-        )
-    ){
-
-        return locationCache.get(
-            cacheKey
-        );
-
-    }
-
-
-    try{
-
-        const url =
-            "https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates" +
-            "?f=json" +
-            "&maxLocations=1" +
-            "&singleLine=" +
-            encodeURIComponent(
-                query
-            );
-
-
-        const response =
-            await fetch(
-                url
-            );
-
-
-        if(
-            !response.ok
-        ){
-
-            return null;
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        if(
-            !data.candidates ||
-            !data.candidates.length
-        ){
-
-            return null;
-
-        }
-
-
-        const candidate =
-            data.candidates[0];
-
-
-        if(
-            !candidate.location
-        ){
-
-            return null;
-
-        }
-
-
-        const result = {
-
-            lat:
-                candidate.location.y,
-
-            lon:
-                candidate.location.x,
-
-            address:
-                candidate.address ||
-                query
-
-        };
-
-
-        locationCache.set(
-            cacheKey,
-            result
-        );
-
-
-        return result;
-
-    }catch(error){
-
-        console.warn(
-            "ArcGIS geocoding error:",
-            error
-        );
-
-        return null;
-
-    }
-
-}
-
-
-/* =========================================================
-   INITIALISE / SHOW MAP
-========================================================= */
-
-function initialiseMap(){
-
-    if(map){
-        return;
-    }
-
-
-    map =
-        L.map(
-            "map",
-            {
-                worldCopyJump:true
-            }
-        );
-
-
-    L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-            maxZoom:19,
-
-            attribution:
-                '&copy; OpenStreetMap contributors'
-
-        }
-    )
-    .addTo(map);
-
-
-    /*
-       Start with a global view.
-       Therefore map is NEVER blank.
-    */
-
-    map.setView(
-        [20,0],
-        2
-    );
-
-}
-
-
-/* =========================================================
    SHOW MAP
+
+   IMPORTANT:
+   POPUP USES DATABASE ADDRESS,
+   NOT OSM'S RETURNED ADDRESS.
 ========================================================= */
 
 function showMap(
     lat,
     lon,
-    name,
-    displayName
+    university
 ){
 
     if(
@@ -3608,20 +3731,69 @@ function showMap(
         );
 
 
+    const databaseAddress =
+        getAddress(
+            university
+        );
+
+
+    const country =
+        getCountry(
+            university
+        );
+
+
+    const name =
+        cleanText(
+            university.name
+        );
+
+
+    /*
+       This is deliberately the SAME address
+       shown in the Address card.
+    */
+
     marker.bindPopup(
 
         `<strong>
-            ${escapeHTML(name)}
+            ${escapeHTML(
+                name
+            )}
+         </strong>
+
+         <br><br>
+
+         <strong>
+            Database Address
          </strong>
 
          <br>
 
          <span
             style="font-size:12px;">
+
             ${escapeHTML(
-                displayName ||
-                ""
+                databaseAddress
             )}
+
+         </span>
+
+         <br><br>
+
+         <strong>
+            Country
+         </strong>
+
+         <br>
+
+         <span
+            style="font-size:12px;">
+
+            ${escapeHTML(
+                country
+            )}
+
          </span>`
 
     );
@@ -3629,7 +3801,7 @@ function showMap(
 
     map.setView(
         [lat,lon],
-        15
+        16
     );
 
 
@@ -3647,7 +3819,7 @@ function showMap(
 
 
     updateMapStatus(
-        "University location identified."
+        "University location identified from the university's name, address and country."
     );
 
 }
@@ -3680,7 +3852,7 @@ function showMapUnavailable(){
 
 
     updateMapStatus(
-        "Exact university coordinates could not be identified. Global map shown."
+        "The exact university location could not be identified automatically. The global map is shown."
     );
 
 }
@@ -3786,7 +3958,8 @@ document
         "click",
         function(){
 
-            input.value = "";
+            input.value =
+                "";
 
             selectedUniversity =
                 null;
@@ -3822,13 +3995,26 @@ document
             resetImage();
 
 
-            if(marker && map){
+            if(
+                marker &&
+                map
+            ){
 
                 map.removeLayer(
                     marker
                 );
 
                 marker = null;
+
+            }
+
+
+            if(map){
+
+                map.setView(
+                    [20,0],
+                    2
+                );
 
             }
 
