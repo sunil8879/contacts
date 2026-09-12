@@ -6078,5 +6078,176 @@ loadUniversities();
 
 })();
 </script>
+
+
+<script>
+/* =========================================================
+   GLOBAL MAP TILE FIX
+   ---------------------------------------------------------
+   ADD ONLY - DO NOT CHANGE EXISTING CODE
+   Replaces the existing OSM base tiles with a more complete
+   global map tile source.
+
+   This does NOT change:
+   - university data
+   - addresses
+   - markers
+   - geocoding
+   - popups
+   - search
+   - layout
+========================================================= */
+
+(function () {
+
+    "use strict";
+
+    function fixGlobalMapTiles() {
+
+        if (
+            typeof map === "undefined" ||
+            !map
+        ) {
+            setTimeout(
+                fixGlobalMapTiles,
+                500
+            );
+            return;
+        }
+
+        /*
+         * Remove existing raster tile layers.
+         * Keep markers and all other Leaflet layers untouched.
+         */
+        const oldTileLayers = [];
+
+        map.eachLayer(function (layer) {
+
+            if (
+                layer instanceof L.TileLayer
+            ) {
+                oldTileLayers.push(layer);
+            }
+
+        });
+
+        oldTileLayers.forEach(function (layer) {
+
+            try {
+                map.removeLayer(layer);
+            }
+            catch (e) {
+                console.warn(
+                    "Could not remove old map tile layer:",
+                    e
+                );
+            }
+
+        });
+
+
+        /*
+         * Primary global map.
+         *
+         * Esri World Street Map provides broad worldwide
+         * land/country coverage and is used here instead
+         * of relying exclusively on the original OSM tiles.
+         */
+        const globalMap =
+            L.tileLayer(
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+                {
+                    maxZoom: 19,
+                    minZoom: 1,
+
+                    attribution:
+                        '&copy; Esri, HERE, Garmin, &copy; OpenStreetMap contributors, and the GIS User Community',
+
+                    crossOrigin: true,
+
+                    keepBuffer: 4,
+
+                    updateWhenIdle: false,
+
+                    updateWhenZooming: false
+                }
+            );
+
+
+        globalMap.addTo(map);
+
+
+        /*
+         * Make sure the complete world is available
+         * when the map is displaying the global view.
+         */
+        map.setView(
+            [20, 0],
+            2
+        );
+
+
+        /*
+         * Force Leaflet to recalculate its tile area.
+         */
+        setTimeout(
+            function () {
+
+                if (map) {
+
+                    map.invalidateSize(
+                        true
+                    );
+
+                }
+
+            },
+            500
+        );
+
+
+        /*
+         * If the user later searches for a university,
+         * the existing code can still zoom to the exact
+         * university coordinates normally.
+         */
+        console.log(
+            "GLOBAL MAP TILE FIX APPLIED"
+        );
+
+    }
+
+
+    /*
+     * Wait until the existing map has been created.
+     */
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                setTimeout(
+                    fixGlobalMapTiles,
+                    800
+                );
+
+            }
+        );
+
+    }
+    else {
+
+        setTimeout(
+            fixGlobalMapTiles,
+            800
+        );
+
+    }
+
+})();
+</script>
 </body>
 </html>
