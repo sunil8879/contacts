@@ -3918,5 +3918,893 @@ loadUniversities();
 
 </script>
 
+
+<script>
+/* =========================================================
+   FINAL COUNTRY FIX
+   ADD THIS SCRIPT JUST ABOVE </body>
+
+   Priority:
+   1. Main JSON country fields
+   2. Address
+   3. Website domain
+   4. University name
+   5. Founded database country fields
+========================================================= */
+
+(function(){
+
+    /* -------------------------------------------------------
+       COUNTRY NAME FROM WEBSITE DOMAIN
+    ------------------------------------------------------- */
+
+    function countryFromWebsite(record){
+
+        if(!record) return "";
+
+        const website = String(
+            record.website ||
+            record.WEBSITE ||
+            record.Website ||
+            ""
+        )
+        .toLowerCase()
+        .trim();
+
+        if(!website) return "";
+
+        const domain =
+            website
+                .replace(/^https?:\/\//,"")
+                .replace(/^www\./,"")
+                .split("/")[0]
+                .split(":")[0];
+
+        const domainMap = {
+
+            ".it":"Italy",
+            ".au":"Australia",
+            ".in":"India",
+            ".uk":"United Kingdom",
+            ".ac.uk":"United Kingdom",
+            ".ca":"Canada",
+            ".de":"Germany",
+            ".fr":"France",
+            ".es":"Spain",
+            ".pt":"Portugal",
+            ".nl":"Netherlands",
+            ".be":"Belgium",
+            ".ch":"Switzerland",
+            ".at":"Austria",
+            ".dk":"Denmark",
+            ".se":"Sweden",
+            ".no":"Norway",
+            ".fi":"Finland",
+            ".pl":"Poland",
+            ".cz":"Czech Republic",
+            ".sk":"Slovakia",
+            ".hu":"Hungary",
+            ".ro":"Romania",
+            ".bg":"Bulgaria",
+            ".gr":"Greece",
+            ".tr":"Turkey",
+            ".ie":"Ireland",
+            ".is":"Iceland",
+            ".nz":"New Zealand",
+            ".za":"South Africa",
+            ".ng":"Nigeria",
+            ".gh":"Ghana",
+            ".ke":"Kenya",
+            ".eg":"Egypt",
+            ".ma":"Morocco",
+            ".br":"Brazil",
+            ".mx":"Mexico",
+            ".ar":"Argentina",
+            ".cl":"Chile",
+            ".co":"Colombia",
+            ".pe":"Peru",
+            ".jp":"Japan",
+            ".kr":"South Korea",
+            ".cn":"China",
+            ".tw":"Taiwan",
+            ".sg":"Singapore",
+            ".my":"Malaysia",
+            ".th":"Thailand",
+            ".id":"Indonesia",
+            ".ph":"Philippines",
+            ".vn":"Vietnam",
+            ".pk":"Pakistan",
+            ".bd":"Bangladesh",
+            ".np":"Nepal",
+            ".lk":"Sri Lanka",
+            ".ae":"United Arab Emirates",
+            ".sa":"Saudi Arabia",
+            ".qa":"Qatar",
+            ".il":"Israel",
+            ".ir":"Iran",
+            ".ru":"Russia",
+            ".ua":"Ukraine",
+            ".kz":"Kazakhstan",
+            ".uz":"Uzbekistan",
+
+            ".edu":"United States",
+            ".gov":"United States",
+
+            ".edu.au":"Australia",
+            ".edu.cn":"China",
+            ".edu.sg":"Singapore",
+            ".edu.my":"Malaysia",
+            ".edu.in":"India",
+            ".ac.in":"India",
+            ".ac.jp":"Japan",
+            ".ac.kr":"South Korea",
+            ".ac.nz":"New Zealand",
+            ".ac.za":"South Africa",
+            ".ac.ae":"United Arab Emirates"
+
+        };
+
+        /*
+           Check longest suffix first.
+           This prevents .edu.au from being interpreted
+           incorrectly as .au only.
+        */
+
+        const suffixes =
+            Object.keys(domainMap)
+                .sort(
+                    (a,b) =>
+                        b.length - a.length
+                );
+
+        for(
+            const suffix of suffixes
+        ){
+
+            if(
+                domain.endsWith(suffix)
+            ){
+
+                return domainMap[suffix];
+
+            }
+
+        }
+
+        return "";
+
+    }
+
+
+    /* -------------------------------------------------------
+       COUNTRY FROM ADDRESS
+    ------------------------------------------------------- */
+
+    function countryFromAddressFinal(record){
+
+        if(!record) return "";
+
+        const address = String(
+            record.address ||
+            record.ADDRESS ||
+            record.full_address ||
+            record.FULL_ADDRESS ||
+            ""
+        ).toLowerCase();
+
+        if(!address) return "";
+
+        const addressMap = {
+
+            "italy":"Italy",
+            "italia":"Italy",
+
+            "australia":"Australia",
+            "india":"India",
+            "united kingdom":"United Kingdom",
+            "england":"United Kingdom",
+            "scotland":"United Kingdom",
+            "wales":"United Kingdom",
+
+            "united states":"United States",
+            "usa":"United States",
+            "u.s.a":"United States",
+
+            "canada":"Canada",
+            "germany":"Germany",
+            "deutschland":"Germany",
+            "france":"France",
+            "spain":"Spain",
+            "españa":"Spain",
+            "portugal":"Portugal",
+            "netherlands":"Netherlands",
+            "belgium":"Belgium",
+            "switzerland":"Switzerland",
+            "austria":"Austria",
+            "denmark":"Denmark",
+            "sweden":"Sweden",
+            "norway":"Norway",
+            "finland":"Finland",
+            "poland":"Poland",
+            "czech republic":"Czech Republic",
+            "czechia":"Czech Republic",
+            "slovakia":"Slovakia",
+            "hungary":"Hungary",
+            "romania":"Romania",
+            "bulgaria":"Bulgaria",
+            "greece":"Greece",
+            "turkey":"Turkey",
+            "türkiye":"Turkey",
+            "ireland":"Ireland",
+            "iceland":"Iceland",
+
+            "new zealand":"New Zealand",
+            "south africa":"South Africa",
+            "nigeria":"Nigeria",
+            "ghana":"Ghana",
+            "kenya":"Kenya",
+            "egypt":"Egypt",
+            "morocco":"Morocco",
+
+            "brazil":"Brazil",
+            "mexico":"Mexico",
+            "argentina":"Argentina",
+            "chile":"Chile",
+            "colombia":"Colombia",
+            "peru":"Peru",
+
+            "japan":"Japan",
+            "china":"China",
+            "taiwan":"Taiwan",
+            "south korea":"South Korea",
+            "singapore":"Singapore",
+            "malaysia":"Malaysia",
+            "thailand":"Thailand",
+            "indonesia":"Indonesia",
+            "philippines":"Philippines",
+            "vietnam":"Vietnam",
+
+            "pakistan":"Pakistan",
+            "bangladesh":"Bangladesh",
+            "nepal":"Nepal",
+            "sri lanka":"Sri Lanka",
+
+            "united arab emirates":"United Arab Emirates",
+            "uae":"United Arab Emirates",
+            "saudi arabia":"Saudi Arabia",
+            "qatar":"Qatar",
+            "israel":"Israel",
+            "iran":"Iran",
+            "russia":"Russia",
+            "ukraine":"Ukraine",
+            "kazakhstan":"Kazakhstan",
+            "uzbekistan":"Uzbekistan"
+
+        };
+
+        /*
+           Longest country names first.
+        */
+
+        const countries =
+            Object.keys(addressMap)
+                .sort(
+                    (a,b) =>
+                        b.length - a.length
+                );
+
+        for(
+            const country of countries
+        ){
+
+            if(
+                address.includes(country)
+            ){
+
+                return addressMap[country];
+
+            }
+
+        }
+
+        return "";
+
+    }
+
+
+    /* -------------------------------------------------------
+       COUNTRY FROM FOUNDED DATABASE
+    ------------------------------------------------------- */
+
+    function countryFromFoundedDatabase(record){
+
+        if(!record) return "";
+
+        const fields = [
+
+            record.COUNTRY,
+            record.Country,
+            record.country,
+            record.COUNTRY_NAME,
+            record.country_name,
+            record.NATION,
+            record.nation
+
+        ];
+
+        for(
+            const value of fields
+        ){
+
+            if(
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== "" &&
+                String(value).trim().toLowerCase() !== "nan"
+            ){
+
+                if(
+                    typeof normaliseCountry === "function"
+                ){
+
+                    const result =
+                        normaliseCountry(value);
+
+                    if(result){
+                        return result;
+                    }
+
+                }
+
+                return String(value).trim();
+
+            }
+
+        }
+
+        return "";
+
+    }
+
+
+    /* -------------------------------------------------------
+       STRONG COUNTRY FROM UNIVERSITY NAME
+    ------------------------------------------------------- */
+
+    function countryFromNameFinal(name){
+
+        const text =
+            String(name || "")
+                .toLowerCase();
+
+        if(!text) return "";
+
+        const clues = [
+
+            ["università","Italy"],
+            ["university of bologna","Italy"],
+            ["university of padua","Italy"],
+            ["university of pisa","Italy"],
+            ["university of milan","Italy"],
+            ["university of rome","Italy"],
+            ["sapienza","Italy"],
+            ["politecnico di milano","Italy"],
+            ["politecnico di torino","Italy"],
+            ["bocconi","Italy"],
+            ["luiss","Italy"],
+
+            ["rmit","Australia"],
+            ["university of melbourne","Australia"],
+            ["university of sydney","Australia"],
+            ["monash","Australia"],
+            ["unsw","Australia"],
+
+            ["indian institute","India"],
+            ["iit ","India"],
+            ["nit ","India"],
+            ["university of delhi","India"],
+            ["delhi university","India"],
+            ["mumbai university","India"],
+
+            ["university of oxford","United Kingdom"],
+            ["university of cambridge","United Kingdom"],
+            ["imperial college","United Kingdom"],
+            ["university college london","United Kingdom"],
+
+            ["harvard","United States"],
+            ["stanford","United States"],
+            ["yale","United States"],
+            ["princeton","United States"],
+            ["massachusetts institute of technology","United States"],
+
+            ["university of toronto","Canada"],
+            ["mcgill","Canada"],
+            ["university of british columbia","Canada"],
+
+            ["university of tokyo","Japan"],
+            ["kyoto university","Japan"],
+
+            ["tsinghua university","China"],
+            ["peking university","China"],
+
+            ["national university of singapore","Singapore"],
+
+            ["eth zurich","Switzerland"],
+            ["university of zurich","Switzerland"],
+
+            ["technical university of munich","Germany"],
+            ["heidelberg university","Germany"],
+            ["humboldt university","Germany"],
+
+            ["sorbonne","France"],
+
+            ["university of amsterdam","Netherlands"],
+            ["delft university","Netherlands"],
+
+            ["university of copenhagen","Denmark"],
+            ["university of stockholm","Sweden"],
+            ["university of oslo","Norway"],
+            ["university of helsinki","Finland"],
+
+            ["university of vienna","Austria"],
+
+            ["university of madrid","Spain"],
+            ["complutense","Spain"],
+
+            ["university of lisbon","Portugal"],
+            ["university of warsaw","Poland"],
+            ["university of bucharest","Romania"],
+
+            ["university of cape town","South Africa"],
+            ["university of pretoria","South Africa"],
+
+            ["university of nairobi","Kenya"],
+            ["university of lagos","Nigeria"],
+            ["university of ghana","Ghana"]
+
+        ];
+
+        for(
+            const clue of clues
+        ){
+
+            if(
+                text.includes(clue[0])
+            ){
+
+                return clue[1];
+
+            }
+
+        }
+
+        return "";
+
+    }
+
+
+    /* -------------------------------------------------------
+       BUILD A BETTER COUNTRY INDEX
+       FROM WORLD_UNIVERSITIES.JSON
+    ------------------------------------------------------- */
+
+    function findFoundedRecordForCountry(university){
+
+        if(
+            !Array.isArray(foundedUniversities) ||
+            !foundedUniversities.length ||
+            !university
+        ){
+
+            return null;
+
+        }
+
+        const targetName =
+            normalizeUniversityName(
+                university.name
+            );
+
+        if(!targetName){
+            return null;
+        }
+
+        let match =
+            foundedUniversities.find(
+                record => {
+
+                    const name =
+                        record &&
+                        (
+                            record.UNIVERSITY ||
+                            record.University ||
+                            record.university ||
+                            record.name ||
+                            record.Name ||
+                            ""
+                        );
+
+                    return (
+                        normalizeUniversityName(name) ===
+                        targetName
+                    );
+
+                }
+            );
+
+        if(match){
+            return match;
+        }
+
+        /*
+           Website fallback
+        */
+
+        const targetWebsite =
+            String(
+                university.website || ""
+            )
+            .toLowerCase()
+            .replace(
+                /^https?:\/\//,
+                ""
+            )
+            .replace(
+                /^www\./,
+                ""
+            )
+            .split("/")[0];
+
+        if(targetWebsite){
+
+            match =
+                foundedUniversities.find(
+                    record => {
+
+                        const website =
+                            String(
+                                record.WEBSITE ||
+                                record.Website ||
+                                record.website ||
+                                ""
+                            )
+                            .toLowerCase()
+                            .replace(
+                                /^https?:\/\//,
+                                ""
+                            )
+                            .replace(
+                                /^www\./,
+                                ""
+                            )
+                            .split("/")[0];
+
+                        return (
+                            website &&
+                            website ===
+                            targetWebsite
+                        );
+
+                    }
+                );
+
+        }
+
+        return match || null;
+
+    }
+
+
+    /* -------------------------------------------------------
+       MASTER COUNTRY FUNCTION
+       REPLACES THE OLD getCountry() LOGIC
+    ------------------------------------------------------- */
+
+    window.getCountry =
+        function(record){
+
+            if(!record){
+                return "";
+            }
+
+
+            /*
+               1. MAIN DATABASE
+               Check ALL likely country fields.
+            */
+
+            const mainFields = [
+
+                record.country,
+                record.country_name,
+                record.countryName,
+                record.country_title,
+                record.countryTitle,
+                record.nation,
+                record.nation_name,
+                record.COUNTRY,
+                record.Country,
+                record.NATION
+
+            ];
+
+
+            for(
+                const value of mainFields
+            ){
+
+                if(
+                    value !== undefined &&
+                    value !== null &&
+                    String(value).trim() !== "" &&
+                    String(value).trim().toLowerCase() !== "nan"
+                ){
+
+                    const result =
+                        typeof normaliseCountry === "function"
+                            ? normaliseCountry(value)
+                            : String(value).trim();
+
+                    if(result){
+                        return result;
+                    }
+
+                }
+
+            }
+
+
+            /*
+               2. MATCH THE SAME UNIVERSITY
+                  IN WORLD_UNIVERSITIES.JSON
+            */
+
+            const foundedRecord =
+                findFoundedRecordForCountry(
+                    record
+                );
+
+
+            if(foundedRecord){
+
+                const country =
+                    countryFromFoundedDatabase(
+                        foundedRecord
+                    );
+
+                if(country){
+                    return country;
+                }
+
+            }
+
+
+            /*
+               3. ADDRESS
+            */
+
+            const addressCountry =
+                countryFromAddressFinal(
+                    record
+                );
+
+            if(addressCountry){
+                return addressCountry;
+            }
+
+
+            /*
+               4. WEBSITE DOMAIN
+            */
+
+            const websiteCountry =
+                countryFromWebsite(
+                    record
+                );
+
+            if(websiteCountry){
+                return websiteCountry;
+            }
+
+
+            /*
+               5. UNIVERSITY NAME
+            */
+
+            const nameCountry =
+                countryFromNameFinal(
+                    record.name ||
+                    record.UNIVERSITY
+                );
+
+            if(nameCountry){
+                return nameCountry;
+            }
+
+
+            return "";
+
+        };
+
+
+    /* -------------------------------------------------------
+       FIX EXISTING AUTOCOMPLETE
+       AND RESULT COUNTRY IMMEDIATELY
+    ------------------------------------------------------- */
+
+    function refreshCountryDisplay(){
+
+        if(
+            typeof selectedUniversity === "undefined" ||
+            !selectedUniversity
+        ){
+
+            return;
+
+        }
+
+        const country =
+            window.getCountry(
+                selectedUniversity
+            );
+
+
+        const result =
+            document.getElementById(
+                "resultCountry"
+            );
+
+
+        if(result){
+
+            result.textContent =
+                country ||
+                "Not available";
+
+        }
+
+    }
+
+
+    /*
+       Patch autocomplete after the original
+       functions have loaded.
+    */
+
+    const oldSearch =
+        window.searchUniversity;
+
+
+    /*
+       The original searchUniversity is not
+       necessarily attached to window, so use
+       a MutationObserver to correct the country
+       card whenever the result changes.
+    */
+
+    const countryObserver =
+        new MutationObserver(
+            function(){
+
+                refreshCountryDisplay();
+
+            }
+        );
+
+
+    const countryBox =
+        document.getElementById(
+            "resultCountry"
+        );
+
+
+    if(countryBox){
+
+        countryObserver.observe(
+            countryBox,
+            {
+                childList:true,
+                characterData:true,
+                subtree:true
+            }
+        );
+
+    }
+
+
+    /*
+       Also patch autocomplete country labels.
+    */
+
+    function fixAutocompleteCountries(){
+
+        document
+            .querySelectorAll(
+                ".autocomplete-item"
+            )
+            .forEach(
+                item => {
+
+                    const strong =
+                        item.querySelector(
+                            "strong"
+                        );
+
+                    const small =
+                        item.querySelector(
+                            "small"
+                        );
+
+                    if(
+                        !strong ||
+                        !small
+                    ){
+
+                        return;
+
+                    }
+
+                    const university =
+                        universities.find(
+                            u =>
+                                cleanText(
+                                    u.name
+                                ) ===
+                                cleanText(
+                                    strong.textContent
+                                )
+                        );
+
+
+                    if(university){
+
+                        const country =
+                            window.getCountry(
+                                university
+                            );
+
+                        small.textContent =
+                            country ||
+                            "Country unavailable";
+
+                    }
+
+                }
+            );
+
+    }
+
+
+    setInterval(
+        fixAutocompleteCountries,
+        500
+    );
+
+
+    /*
+       FINAL SAFETY:
+       Whenever SEARCH finishes, recalculate
+       country using the new master function.
+    */
+
+    setInterval(
+        function(){
+
+            if(
+                selectedUniversity
+            ){
+
+                refreshCountryDisplay();
+
+            }
+
+        },
+        300
+    );
+
+
+})();
+</script>
+
 </body>
 </html>
