@@ -4744,5 +4744,102 @@ loadUniversities();
 
 })();
 </script>
+
+
+
+<script>
+/* ============================================================
+   SHOW EXACT UNIVERSITY NAME BESIDE THE MAP LOCATION POINTER
+   Paste this entire block immediately before </body>
+   ============================================================ */
+
+(function () {
+
+    function addUniversityNameToMap() {
+        if (!map || !marker || !selectedUniversity) {
+            setTimeout(addUniversityNameToMap, 300);
+            return;
+        }
+
+        const exactName = selectedUniversity.name;
+
+        if (!exactName) return;
+
+        /* Remove any previous university-name label */
+        if (marker._universityNameTooltip) {
+            marker.unbindTooltip();
+            marker._universityNameTooltip = null;
+        }
+
+        /* Add the EXACT name from WORLD_UNIVERSITIES_ECTS.json */
+        marker.bindTooltip(exactName, {
+            permanent: true,
+            direction: "top",
+            offset: [0, -10],
+            opacity: 1,
+            className: "university-map-name"
+        });
+
+        marker._universityNameTooltip = true;
+    }
+
+    /* Run whenever the selected university changes */
+    const originalDisplayUniversity = window.displayUniversity;
+
+    if (typeof originalDisplayUniversity === "function") {
+        window.displayUniversity = function (university) {
+            const result = originalDisplayUniversity.apply(this, arguments);
+
+            setTimeout(addUniversityNameToMap, 100);
+
+            return result;
+        };
+    }
+
+    /* Also keep checking briefly because the map/marker is created
+       asynchronously by locateUniversity() */
+    let checks = 0;
+
+    function checkMap() {
+        checks++;
+
+        if (map && marker && selectedUniversity) {
+            addUniversityNameToMap();
+            return;
+        }
+
+        if (checks < 40) {
+            setTimeout(checkMap, 250);
+        }
+    }
+
+    checkMap();
+
+    /* Styling for the university name displayed beside the marker */
+    const style = document.createElement("style");
+
+    style.textContent = `
+        .university-map-name {
+            background: #000 !important;
+            color: #fff !important;
+            border: 2px solid #00e6c3 !important;
+            border-radius: 6px !important;
+            padding: 7px 11px !important;
+            font-family: Arial, Helvetica, sans-serif !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            white-space: nowrap !important;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.35) !important;
+        }
+
+        .university-map-name:before {
+            border-top-color: #000 !important;
+        }
+    `;
+
+    document.head.appendChild(style);
+
+})();
+</script>
 </body>
 </html>
