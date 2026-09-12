@@ -1,0 +1,2041 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONTACTS OF GLOBAL UNIVERSITIES</title>
+
+<style>
+
+:root {
+    --aqua: #7fffd4;
+    --aqua-dark: #20d9ad;
+    --aqua-light: #d9fff3;
+    --black: #050505;
+    --white: #ffffff;
+    --grey: #dfe8e5;
+    --dark-grey: #687570;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(127,255,212,.20), transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(127,255,212,.18), transparent 25%),
+        var(--black);
+    color: var(--white);
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+    position: relative;
+    overflow: hidden;
+    padding: 55px 20px 45px;
+    text-align: center;
+    background:
+        linear-gradient(
+            135deg,
+            var(--black) 0%,
+            #071510 45%,
+            var(--aqua-dark) 100%
+        );
+    border-bottom: 4px solid var(--aqua);
+}
+
+.header::before {
+    content: "";
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    border: 2px solid rgba(127,255,212,.35);
+    border-radius: 50%;
+    top: -180px;
+    left: -100px;
+}
+
+.header::after {
+    content: "";
+    position: absolute;
+    width: 450px;
+    height: 450px;
+    border: 2px solid rgba(255,255,255,.15);
+    border-radius: 50%;
+    bottom: -280px;
+    right: -120px;
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.badge {
+    display: inline-block;
+    padding: 8px 18px;
+    border: 1px solid var(--aqua);
+    border-radius: 30px;
+    color: var(--aqua);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin-bottom: 18px;
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(32px, 6vw, 64px);
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1;
+}
+
+.header-title-aqua {
+    color: var(--aqua);
+}
+
+.subtitle {
+    margin: 18px auto 0;
+    max-width: 850px;
+    color: #eafff8;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   SEARCH SECTION
+========================================================= */
+
+.search-area {
+    max-width: 1050px;
+    margin: -25px auto 0;
+    position: relative;
+    z-index: 10;
+    padding: 0 20px;
+}
+
+.search-card {
+    background: var(--white);
+    color: var(--black);
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.55),
+        0 0 0 3px var(--aqua);
+}
+
+.search-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+#universitySearch {
+    width: 100%;
+    padding: 19px 22px;
+    font-size: 18px;
+    font-weight: 600;
+    border: 2px solid #111;
+    border-radius: 13px;
+    outline: none;
+    transition: .2s;
+}
+
+#universitySearch:focus {
+    border-color: var(--aqua-dark);
+    box-shadow: 0 0 0 4px rgba(32,217,173,.18);
+}
+
+.search-help {
+    margin-top: 9px;
+    font-size: 12px;
+    color: var(--dark-grey);
+}
+
+
+/* =========================================================
+   AUTOCOMPLETE
+========================================================= */
+
+.suggestions {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 7px);
+    background: var(--white);
+    border: 2px solid var(--black);
+    border-radius: 13px;
+    max-height: 360px;
+    overflow-y: auto;
+    display: none;
+    z-index: 100;
+    box-shadow: 0 18px 40px rgba(0,0,0,.35);
+}
+
+.suggestion {
+    padding: 14px 17px;
+    border-bottom: 1px solid var(--grey);
+    cursor: pointer;
+    color: var(--black);
+    transition: .15s;
+}
+
+.suggestion:last-child {
+    border-bottom: none;
+}
+
+.suggestion:hover {
+    background: var(--aqua-light);
+    padding-left: 23px;
+}
+
+.suggestion-name {
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.suggestion-location {
+    margin-top: 4px;
+    color: var(--dark-grey);
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+    max-width: 1100px;
+    margin: 65px auto;
+    padding: 0 20px;
+}
+
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+.welcome {
+    text-align: center;
+    padding: 50px 25px;
+    border: 1px solid rgba(127,255,212,.35);
+    border-radius: 25px;
+    background: rgba(127,255,212,.05);
+}
+
+.welcome-icon {
+    font-size: 55px;
+    margin-bottom: 15px;
+}
+
+.welcome h2 {
+    margin: 0 0 12px;
+    font-size: 30px;
+}
+
+.welcome h2 span {
+    color: var(--aqua);
+}
+
+.welcome p {
+    max-width: 700px;
+    margin: auto;
+    color: #cbd8d4;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   UNIVERSITY RESULT
+========================================================= */
+
+.result {
+    display: none;
+    animation: appear .4s ease;
+}
+
+@keyframes appear {
+
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   UNIVERSITY HERO
+========================================================= */
+
+.university-hero {
+    background: var(--white);
+    color: var(--black);
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 25px 70px rgba(0,0,0,.45);
+}
+
+.hero-top {
+    padding: 35px;
+    background:
+        linear-gradient(
+            120deg,
+            var(--aqua),
+            var(--white)
+        );
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.logo-box {
+    width: 135px;
+    height: 135px;
+    flex-shrink: 0;
+    border-radius: 20px;
+    background: var(--white);
+    border: 4px solid var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 8px 8px 0 var(--black);
+}
+
+.logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+}
+
+.logo-placeholder {
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--black);
+}
+
+.hero-info h2 {
+    margin: 0;
+    font-size: clamp(25px, 4vw, 42px);
+    line-height: 1.1;
+}
+
+.hero-country {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 7px 14px;
+    background: var(--black);
+    color: var(--aqua);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   INFORMATION GRID
+========================================================= */
+
+.info-grid {
+    padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.info-card {
+    border: 2px solid #111;
+    border-radius: 17px;
+    padding: 22px;
+    background: #fafafa;
+    transition: .2s;
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 6px 6px 0 var(--aqua);
+}
+
+.info-card.full {
+    grid-column: 1 / -1;
+}
+
+.info-title {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #56635f;
+    margin-bottom: 9px;
+}
+
+.info-value {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.55;
+    word-break: break-word;
+}
+
+.info-value a {
+    color: #008b6d;
+    text-decoration: none;
+    font-weight: 900;
+}
+
+.info-value a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   WEBSITE BUTTON
+========================================================= */
+
+.website-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 11px 17px;
+    border-radius: 9px;
+    background: var(--black);
+    color: var(--aqua) !important;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-weight: 900;
+    transition: .2s;
+}
+
+.website-button:hover {
+    background: var(--aqua);
+    color: var(--black) !important;
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   IMAGE SECTION
+========================================================= */
+
+.image-section {
+    margin: 0 30px 30px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #050505;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-section img {
+    display: block;
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+}
+
+.image-caption {
+    padding: 35px;
+    text-align: center;
+    color: #bfcac6;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #bfcac6;
+}
+
+.loading {
+    color: var(--aqua);
+}
+
+.error {
+    color: #ffb3b3;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+    margin-top: 80px;
+    padding: 35px 20px;
+    text-align: center;
+    border-top: 2px solid var(--aqua);
+    background: #030303;
+}
+
+.footer-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--aqua);
+    letter-spacing: 2px;
+}
+
+.footer-text {
+    margin-top: 9px;
+    color: #899590;
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .header {
+        padding: 40px 15px 45px;
+    }
+
+    .search-card {
+        padding: 20px;
+    }
+
+    .hero-top {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .info-card.full {
+        grid-column: auto;
+    }
+
+    .image-section {
+        margin: 0 20px 20px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =======================================================
+     HEADER
+======================================================== -->
+
+<header class="header">
+
+    <div class="header-content">
+
+        <div class="badge">
+            GLOBAL UNIVERSITY DIRECTORY
+        </div>
+
+        <h1>
+            CONTACTS OF
+            <span class="header-title-aqua">
+                GLOBAL UNIVERSITIES
+            </span>
+        </h1>
+
+        <div class="subtitle">
+            Search university contact information from a global
+            database of universities — including address, email,
+            telephone, website and available university imagery.
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =======================================================
+     SEARCH
+======================================================== -->
+
+<section class="search-area">
+
+    <div class="search-card">
+
+        <label class="search-label">
+            Search University
+        </label>
+
+        <div class="search-wrapper">
+
+            <input
+                type="text"
+                id="universitySearch"
+                autocomplete="off"
+                placeholder="Type at least 3 letters — e.g. Harvard, Mumbai, Oxford..."
+            >
+
+            <div
+                id="suggestions"
+                class="suggestions">
+            </div>
+
+        </div>
+
+        <div class="search-help">
+            Start typing at least 3 letters to search the global university database.
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     MAIN
+======================================================== -->
+
+<main class="main">
+
+
+    <!-- WELCOME -->
+
+    <section
+        id="welcome"
+        class="welcome">
+
+        <div class="welcome-icon">
+            🌍
+        </div>
+
+        <h2>
+            Explore
+            <span>Global Universities</span>
+        </h2>
+
+        <p>
+            Enter a university name above to discover its
+            contact information, location, website and available
+            university image.
+        </p>
+
+    </section>
+
+
+    <!-- RESULT -->
+
+    <section
+        id="result"
+        class="result">
+
+        <div class="university-hero">
+
+
+            <!-- HERO -->
+
+            <div class="hero-top">
+
+                <div class="logo-box">
+
+                    <img
+                        id="universityLogo"
+                        src=""
+                        alt="University logo"
+                        style="display:none;"
+                    >
+
+                    <div
+                        id="logoPlaceholder"
+                        class="logo-placeholder">
+                        U
+                    </div>
+
+                </div>
+
+
+                <div class="hero-info">
+
+                    <h2 id="universityName">
+                        University
+                    </h2>
+
+                    <div
+                        id="universityCountry"
+                        class="hero-country">
+                        COUNTRY
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- INFORMATION -->
+
+            <div class="info-grid">
+
+
+                <!-- COUNTRY -->
+
+                <div class="info-card">
+
+                    <div class="info-title">
+                        Country
+                    </div>
+
+                    <div
+                        id="country"
+                        class="info-value">
+                        —
+                    </div>
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="info-card">
+
+                    <div class="info-title">
+                        Phone
+                    </div>
+
+                    <div
+                        id="phone"
+                        class="info-value">
+                        —
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="info-card">
+
+                    <div class="info-title">
+                        Email
+                    </div>
+
+                    <div
+                        id="email"
+                        class="info-value">
+                        —
+                    </div>
+
+                </div>
+
+
+                <!-- WEBSITE -->
+
+                <div class="info-card">
+
+                    <div class="info-title">
+                        Official Website
+                    </div>
+
+                    <div
+                        id="website"
+                        class="info-value">
+                        —
+                    </div>
+
+                </div>
+
+
+                <!-- ADDRESS -->
+
+                <div class="info-card full">
+
+                    <div class="info-title">
+                        Full Address
+                    </div>
+
+                    <div
+                        id="address"
+                        class="info-value">
+                        —
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- UNIVERSITY IMAGE -->
+
+            <div
+                id="imageSection"
+                class="image-section"
+                style="display:none;">
+
+                <img
+                    id="universityImage"
+                    src=""
+                    alt="University image"
+                >
+
+                <div
+                    id="imageCaption"
+                    class="image-caption"
+                    style="display:none;">
+                    University image unavailable
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <div
+        id="status"
+        class="status">
+    </div>
+
+
+</main>
+
+
+<!-- =======================================================
+     FOOTER
+======================================================== -->
+
+<footer class="footer">
+
+    <div class="footer-title">
+        CONTACTS OF GLOBAL UNIVERSITIES
+    </div>
+
+    <div class="footer-text">
+        Global university contact directory • Powered by
+        WORLD_UNIVERSITIES_ECTS.json
+    </div>
+
+</footer>
+
+
+<script>
+
+/* ==========================================================
+   CONFIGURATION
+========================================================== */
+
+const JSON_FILE = "WORLD_UNIVERSITIES_ECTS.json";
+
+let universities = [];
+
+let searchTimer = null;
+
+
+/* ==========================================================
+   ELEMENTS
+========================================================== */
+
+const searchInput =
+    document.getElementById("universitySearch");
+
+const suggestions =
+    document.getElementById("suggestions");
+
+const welcome =
+    document.getElementById("welcome");
+
+const result =
+    document.getElementById("result");
+
+const status =
+    document.getElementById("status");
+
+
+/* ==========================================================
+   LOAD DATABASE
+========================================================== */
+
+async function loadDatabase() {
+
+    status.textContent = "Loading global university database...";
+    status.className = "status loading";
+
+    try {
+
+        const response =
+            await fetch(JSON_FILE, {
+                cache: "no-store"
+            });
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load " + JSON_FILE
+            );
+
+        }
+
+        universities =
+            await response.json();
+
+
+        if (!Array.isArray(universities)) {
+
+            throw new Error(
+                "JSON must contain an array of university records."
+            );
+
+        }
+
+
+        status.textContent =
+            universities.length.toLocaleString() +
+            " universities loaded.";
+
+        status.className = "status";
+
+
+        console.log(
+            "University database loaded:",
+            universities.length
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        status.textContent =
+            "Could not load WORLD_UNIVERSITIES_ECTS.json. " +
+            "Make sure index.html and the JSON file are in the same folder.";
+
+        status.className = "status error";
+
+    }
+
+}
+
+
+/* ==========================================================
+   NORMALIZE TEXT
+========================================================== */
+
+function normalize(text) {
+
+    return String(text || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+}
+
+
+/* ==========================================================
+   GET UNIVERSITY COUNTRY
+========================================================== */
+
+function getCountry(university) {
+
+    /*
+       Priority:
+
+       1. Existing country field, if present.
+       2. Country contained in address.
+       3. Phone number country detection.
+       4. Country ID displayed as fallback.
+    */
+
+
+    if (university.country) {
+
+        return university.country;
+
+    }
+
+
+    const address =
+        String(university.address || "");
+
+
+    /*
+       Try to identify country from the end of
+       the address.
+
+       Example:
+
+       Avenida Emilio Civit 150,
+       M5500, Mendoza, Argentina
+    */
+
+    const addressCountries = [
+
+        "Argentina",
+        "Australia",
+        "Austria",
+        "Belgium",
+        "Brazil",
+        "Canada",
+        "China",
+        "Colombia",
+        "Croatia",
+        "Czech Republic",
+        "Denmark",
+        "Egypt",
+        "Finland",
+        "France",
+        "Germany",
+        "Greece",
+        "Hungary",
+        "India",
+        "Indonesia",
+        "Ireland",
+        "Israel",
+        "Italy",
+        "Japan",
+        "Kenya",
+        "Malaysia",
+        "Mexico",
+        "Netherlands",
+        "New Zealand",
+        "Nigeria",
+        "Norway",
+        "Pakistan",
+        "Peru",
+        "Philippines",
+        "Poland",
+        "Portugal",
+        "Romania",
+        "Russia",
+        "Singapore",
+        "South Africa",
+        "South Korea",
+        "Spain",
+        "Sri Lanka",
+        "Sweden",
+        "Switzerland",
+        "Thailand",
+        "Türkiye",
+        "Turkey",
+        "Ukraine",
+        "United Arab Emirates",
+        "United Kingdom",
+        "United States",
+        "Uruguay",
+        "Venezuela",
+        "Vietnam"
+    ];
+
+
+    const lowerAddress =
+        normalize(address);
+
+
+    for (const country of addressCountries) {
+
+        if (
+            lowerAddress.includes(
+                normalize(country)
+            )
+        ) {
+
+            return country;
+
+        }
+
+    }
+
+
+    /*
+       Try international telephone prefixes.
+
+       This is only a fallback because a local phone
+       number without an international country code
+       cannot always be identified reliably.
+    */
+
+    const phone =
+        String(university.phone || "")
+            .replace(/[^\d+]/g, "");
+
+
+    const phoneCountries = [
+
+        ["+91", "India"],
+        ["+44", "United Kingdom"],
+        ["+49", "Germany"],
+        ["+33", "France"],
+        ["+39", "Italy"],
+        ["+34", "Spain"],
+        ["+31", "Netherlands"],
+        ["+32", "Belgium"],
+        ["+43", "Austria"],
+        ["+41", "Switzerland"],
+        ["+46", "Sweden"],
+        ["+47", "Norway"],
+        ["+45", "Denmark"],
+        ["+358", "Finland"],
+        ["+48", "Poland"],
+        ["+351", "Portugal"],
+        ["+30", "Greece"],
+        ["+36", "Hungary"],
+        ["+40", "Romania"],
+        ["+380", "Ukraine"],
+        ["+7", "Russia / Kazakhstan"],
+        ["+81", "Japan"],
+        ["+82", "South Korea"],
+        ["+86", "China"],
+        ["+65", "Singapore"],
+        ["+60", "Malaysia"],
+        ["+66", "Thailand"],
+        ["+62", "Indonesia"],
+        ["+61", "Australia"],
+        ["+64", "New Zealand"],
+        ["+1", "United States / Canada"],
+        ["+52", "Mexico"],
+        ["+55", "Brazil"],
+        ["+54", "Argentina"],
+        ["+57", "Colombia"],
+        ["+51", "Peru"],
+        ["+27", "South Africa"],
+        ["+234", "Nigeria"],
+        ["+254", "Kenya"],
+        ["+971", "United Arab Emirates"]
+    ];
+
+
+    for (
+        const [prefix, country]
+        of phoneCountries
+    ) {
+
+        if (phone.startsWith(prefix)) {
+
+            return country;
+
+        }
+
+    }
+
+
+    /*
+       Last fallback:
+       show country_id rather than inventing
+       a country name.
+    */
+
+    if (
+        university.country_id !== undefined &&
+        university.country_id !== null
+    ) {
+
+        return "Country ID " +
+            university.country_id;
+
+    }
+
+
+    return "Country not available";
+
+}
+
+
+/* ==========================================================
+   FORMAT ADDRESS
+========================================================== */
+
+function getAddress(university) {
+
+    let address =
+        String(university.address || "").trim();
+
+    const postal =
+        String(university.postal_code || "").trim();
+
+
+    if (
+        postal &&
+        !normalize(address).includes(
+            normalize(postal)
+        )
+    ) {
+
+        if (address) {
+
+            address += ", " + postal;
+
+        } else {
+
+            address = postal;
+
+        }
+
+    }
+
+
+    return address ||
+        "Address not available";
+
+}
+
+
+/* ==========================================================
+   WEBSITE
+========================================================== */
+
+function getWebsite(university) {
+
+    let website =
+        String(university.website || "").trim();
+
+
+    if (!website) {
+
+        return "";
+
+    }
+
+
+    if (
+        !website.startsWith("http://") &&
+        !website.startsWith("https://")
+    ) {
+
+        website =
+            "https://" + website;
+
+    }
+
+
+    return website;
+
+}
+
+
+/* ==========================================================
+   EMAIL
+========================================================== */
+
+function getEmail(university) {
+
+    const email =
+        String(university.email || "").trim();
+
+
+    return email;
+
+}
+
+
+/* ==========================================================
+   SEARCH DATABASE
+========================================================== */
+
+function searchUniversities(query) {
+
+    const q =
+        normalize(query);
+
+
+    if (q.length < 3) {
+
+        return [];
+
+    }
+
+
+    /*
+       First search by university name.
+    */
+
+    const matches =
+        universities
+            .filter(university => {
+
+                return normalize(
+                    university.name
+                ).includes(q);
+
+            })
+            .slice(0, 30);
+
+
+    return matches;
+
+}
+
+
+/* ==========================================================
+   SHOW SUGGESTIONS
+========================================================== */
+
+function showSuggestions(matches) {
+
+    suggestions.innerHTML = "";
+
+
+    if (!matches.length) {
+
+        suggestions.style.display = "none";
+
+        return;
+
+    }
+
+
+    matches.forEach(university => {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "suggestion";
+
+
+        const country =
+            getCountry(university);
+
+
+        item.innerHTML = `
+
+            <div class="suggestion-name">
+                ${escapeHtml(university.name || "Unnamed University")}
+            </div>
+
+            <div class="suggestion-location">
+                ${escapeHtml(country)}
+                ${university.city_id
+                    ? " • City ID " +
+                      escapeHtml(university.city_id)
+                    : ""}
+            </div>
+
+        `;
+
+
+        item.addEventListener(
+            "click",
+            function() {
+
+                searchInput.value =
+                    university.name || "";
+
+                suggestions.style.display =
+                    "none";
+
+                displayUniversity(
+                    university
+                );
+
+            }
+        );
+
+
+        suggestions.appendChild(item);
+
+    });
+
+
+    suggestions.style.display = "block";
+
+}
+
+
+/* ==========================================================
+   ESCAPE HTML
+========================================================== */
+
+function escapeHtml(value) {
+
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* ==========================================================
+   DISPLAY UNIVERSITY
+========================================================== */
+
+function displayUniversity(university) {
+
+    welcome.style.display =
+        "none";
+
+    result.style.display =
+        "block";
+
+
+    const name =
+        university.name ||
+        "University";
+
+
+    const country =
+        getCountry(university);
+
+
+    const address =
+        getAddress(university);
+
+
+    const phone =
+        String(
+            university.phone || ""
+        ).trim();
+
+
+    const email =
+        getEmail(university);
+
+
+    const website =
+        getWebsite(university);
+
+
+    document.getElementById(
+        "universityName"
+    ).textContent = name;
+
+
+    document.getElementById(
+        "universityCountry"
+    ).textContent =
+        country.toUpperCase();
+
+
+    document.getElementById(
+        "country"
+    ).textContent =
+        country;
+
+
+    document.getElementById(
+        "address"
+    ).textContent =
+        address;
+
+
+    document.getElementById(
+        "phone"
+    ).textContent =
+        phone ||
+        "Phone number not available";
+
+
+    /*
+       EMAIL
+    */
+
+    const emailElement =
+        document.getElementById("email");
+
+
+    if (email) {
+
+        emailElement.innerHTML =
+            `<a href="mailto:${escapeHtml(email)}">
+                ${escapeHtml(email)}
+             </a>`;
+
+    }
+
+    else {
+
+        emailElement.textContent =
+            "Email not available";
+
+    }
+
+
+    /*
+       WEBSITE
+    */
+
+    const websiteElement =
+        document.getElementById("website");
+
+
+    if (website) {
+
+        let displayWebsite =
+            website
+                .replace(/^https?:\/\//, "")
+                .replace(/\/$/, "");
+
+
+        websiteElement.innerHTML = `
+
+            <div>
+                ${escapeHtml(displayWebsite)}
+            </div>
+
+            <a
+                class="website-button"
+                href="${escapeHtml(website)}"
+                target="_blank"
+                rel="noopener noreferrer">
+                VISIT WEBSITE ↗
+            </a>
+
+        `;
+
+    }
+
+    else {
+
+        websiteElement.textContent =
+            "Website not available";
+
+    }
+
+
+    /*
+       LOGO / IMAGE
+    */
+
+    loadUniversityImage(
+        university,
+        name,
+        website
+    );
+
+
+    /*
+       Scroll result into view.
+    */
+
+    setTimeout(() => {
+
+        result.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }, 100);
+
+}
+
+
+/* ==========================================================
+   LOAD UNIVERSITY IMAGE
+========================================================== */
+
+function loadUniversityImage(
+    university,
+    name,
+    website
+) {
+
+    const logo =
+        document.getElementById(
+            "universityLogo"
+        );
+
+    const placeholder =
+        document.getElementById(
+            "logoPlaceholder"
+        );
+
+    const imageSection =
+        document.getElementById(
+            "imageSection"
+        );
+
+    const image =
+        document.getElementById(
+            "universityImage"
+        );
+
+
+    logo.style.display =
+        "none";
+
+    placeholder.style.display =
+        "flex";
+
+    imageSection.style.display =
+        "none";
+
+
+    /*
+       ------------------------------------------------------
+       1. Try dataset logo
+       ------------------------------------------------------
+    */
+
+    if (university.logo) {
+
+        const possibleLogo =
+            String(
+                university.logo
+            ).trim();
+
+
+        /*
+           If logo already contains a URL,
+           use it directly.
+        */
+
+        if (
+            possibleLogo.startsWith("http://") ||
+            possibleLogo.startsWith("https://")
+        ) {
+
+            logo.onload =
+                function() {
+
+                    logo.style.display =
+                        "block";
+
+                    placeholder.style.display =
+                        "none";
+
+                };
+
+
+            logo.onerror =
+                function() {
+
+                    tryWikipediaImage(
+                        name,
+                        website,
+                        imageSection,
+                        image
+                    );
+
+                };
+
+
+            logo.src =
+                possibleLogo;
+
+
+            return;
+
+        }
+
+
+        /*
+           Try logo in common local locations.
+        */
+
+        const logoPaths = [
+
+            possibleLogo,
+
+            "images/" + possibleLogo,
+
+            "logos/" + possibleLogo,
+
+            "logo/" + possibleLogo
+
+        ];
+
+
+        tryLogoPaths(
+            logoPaths,
+            0,
+            logo,
+            placeholder,
+            function() {
+
+                tryWikipediaImage(
+                    name,
+                    website,
+                    imageSection,
+                    image
+                );
+
+            }
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+       ------------------------------------------------------
+       2. Try website favicon
+       ------------------------------------------------------
+    */
+
+    if (website) {
+
+        const domain =
+            website
+                .replace(/^https?:\/\//, "")
+                .split("/")[0];
+
+
+        const favicon =
+            "https://www.google.com/s2/favicons?domain=" +
+            encodeURIComponent(domain) +
+            "&sz=256";
+
+
+        logo.onload =
+            function() {
+
+                logo.style.display =
+                    "block";
+
+                placeholder.style.display =
+                    "none";
+
+            };
+
+
+        logo.onerror =
+            function() {
+
+                tryWikipediaImage(
+                    name,
+                    website,
+                    imageSection,
+                    image
+                );
+
+            };
+
+
+        logo.src =
+            favicon;
+
+
+        return;
+
+    }
+
+
+    /*
+       ------------------------------------------------------
+       3. Wikipedia
+       ------------------------------------------------------
+    */
+
+    tryWikipediaImage(
+        name,
+        website,
+        imageSection,
+        image
+    );
+
+}
+
+
+/* ==========================================================
+   TRY LOGO PATHS
+========================================================== */
+
+function tryLogoPaths(
+    paths,
+    index,
+    logo,
+    placeholder,
+    fallback
+) {
+
+    if (index >= paths.length) {
+
+        fallback();
+
+        return;
+
+    }
+
+
+    const testImage =
+        new Image();
+
+
+    testImage.onload =
+        function() {
+
+            logo.src =
+                paths[index];
+
+            logo.style.display =
+                "block";
+
+            placeholder.style.display =
+                "none";
+
+        };
+
+
+    testImage.onerror =
+        function() {
+
+            tryLogoPaths(
+                paths,
+                index + 1,
+                logo,
+                placeholder,
+                fallback
+            );
+
+        };
+
+
+    testImage.src =
+        paths[index];
+
+}
+
+
+/* ==========================================================
+   WIKIPEDIA IMAGE
+========================================================== */
+
+async function tryWikipediaImage(
+    name,
+    website,
+    imageSection,
+    image
+) {
+
+    try {
+
+        const url =
+            "https://en.wikipedia.org/api/rest_v1/page/summary/" +
+            encodeURIComponent(name);
+
+
+        const response =
+            await fetch(url);
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Wikipedia image unavailable"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data &&
+            data.originalimage &&
+            data.originalimage.source
+        ) {
+
+            image.onload =
+                function() {
+
+                    imageSection.style.display =
+                        "flex";
+
+                };
+
+
+            image.onerror =
+                function() {
+
+                    imageSection.style.display =
+                        "none";
+
+                };
+
+
+            image.src =
+                data.originalimage.source;
+
+
+            return;
+
+        }
+
+
+        imageSection.style.display =
+            "none";
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "No university image found:",
+            error
+        );
+
+
+        imageSection.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* ==========================================================
+   SEARCH INPUT
+========================================================== */
+
+searchInput.addEventListener(
+    "input",
+    function() {
+
+        const query =
+            this.value.trim();
+
+
+        clearTimeout(
+            searchTimer
+        );
+
+
+        if (query.length < 3) {
+
+            suggestions.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        /*
+           Small delay prevents unnecessary
+           searching while typing.
+        */
+
+        searchTimer =
+            setTimeout(
+                function() {
+
+                    const matches =
+                        searchUniversities(
+                            query
+                        );
+
+
+                    showSuggestions(
+                        matches
+                    );
+
+                },
+                120
+            );
+
+    }
+);
+
+
+/* ==========================================================
+   ENTER KEY
+========================================================== */
+
+searchInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            const matches =
+                searchUniversities(
+                    this.value.trim()
+                );
+
+
+            if (matches.length > 0) {
+
+                suggestions.style.display =
+                    "none";
+
+                displayUniversity(
+                    matches[0]
+                );
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ==========================================================
+   CLOSE AUTOCOMPLETE
+========================================================== */
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            !event.target.closest(
+                ".search-wrapper"
+            )
+        ) {
+
+            suggestions.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+
+/* ==========================================================
+   START
+========================================================== */
+
+loadDatabase();
+
+</script>
+
+</body>
+
+</html>
