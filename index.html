@@ -6889,7 +6889,12 @@ loadUniversities();
         );
 
 
-    
+   const universityIcon =
+        makePOIIcon(
+            "🎓",
+            "#00897b"
+        );
+ 
 
     /* =========================================================
        OVERPASS - FIND NEAREST AIRPORT/HOTEL/HOSPITAL
@@ -7245,6 +7250,47 @@ out center tags;
             safeText(
                 university.name
             );
+         /*
+         * University marker.
+         */
+        const universityMarker =
+            L.marker(
+                [lat, lon],
+                {
+                    icon:
+                        universityIcon,
+                    zIndexOffset:
+                        1000
+                }
+            )
+            .addTo(
+                nearbyLayer
+            );
+
+
+
+         universityMarker.bindPopup(
+
+            "<strong>🎓 " +
+            htmlEscape(
+                universityName
+            ) +
+            "</strong>" +
+
+            (
+                universityAddress
+                    ? "<br><br>" +
+                      htmlEscape(
+                          universityAddress
+                      )
+                    : ""
+            )
+
+        );
+
+           
+
+
 
 
         let universityAddress = "";
