@@ -6909,7 +6909,11 @@ loadUniversities();
         const query = `
 [out:json][timeout:25];
 (
-    
+    /*
+   * INTERNATIONAL AIRPORTS
+   * Use IATA/ICAO codes or international designation.
+   * Excludes ordinary local airfields where possible.
+   */
   node["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
   way["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
   relation["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
@@ -6920,7 +6924,7 @@ loadUniversities();
 
   node["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
   way["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
-  relation["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon]);
+  relation["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
 
   node["tourism"="hotel"](around:25000,${lat},${lon});
   way["tourism"="hotel"](around:25000,${lat},${lon});
@@ -6932,6 +6936,7 @@ loadUniversities();
 );
 out center tags;
 `;
+
         const servers = [
 
             "https://overpass-api.de/api/interpreter",
