@@ -6924,10 +6924,6 @@ loadUniversities();
   way["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
   relation["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
 
-  /* FALLBACK AERODROMES */
-  node["aeroway"="aerodrome"](around:50000,${lat},${lon});
-  way["aeroway"="aerodrome"](around:50000,${lat},${lon});
-  relation["aeroway"="aerodrome"](around:50000,${lat},${lon});
   
   node["tourism"="hotel"](around:25000,${lat},${lon});
   way["tourism"="hotel"](around:25000,${lat},${lon});
@@ -7134,15 +7130,17 @@ out center tags;
             let type = null;
 
 
-            if (
-                tags.aeroway ===
-                "aerodrome"
-            ) {
+           if (
+    tags.aeroway === "aerodrome" &&
+    (
+        tags.international === "yes" ||
+        safeText(tags.iata) !== ""
+    )
+) {
 
-                type = "airport";
+    type = "airport";
 
-            }
-            else if (
+} else if (
                 tags.tourism ===
                 "hotel"
             ) {
