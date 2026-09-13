@@ -6914,18 +6914,21 @@ loadUniversities();
    * Use IATA/ICAO codes or international designation.
    * Excludes ordinary local airfields where possible.
    */
-  node["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
-  way["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
-  relation["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
-
-  node["aeroway"="aerodrome"]["icao"](around:50000,${lat},${lon});
-  way["aeroway"="aerodrome"]["icao"](around:50000,${lat},${lon});
-  relation["aeroway"="aerodrome"]["icao"](around:50000,${lat},${lon});
-
+    /* INTERNATIONAL AIRPORTS — preferred */
   node["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
   way["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
   relation["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
 
+  /* AIRPORTS WITH IATA CODE — possible international airport */
+  node["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
+  way["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
+  relation["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
+
+  /* FALLBACK AERODROMES */
+  node["aeroway"="aerodrome"](around:50000,${lat},${lon});
+  way["aeroway"="aerodrome"](around:50000,${lat},${lon});
+  relation["aeroway"="aerodrome"](around:50000,${lat},${lon});
+  
   node["tourism"="hotel"](around:25000,${lat},${lon});
   way["tourism"="hotel"](around:25000,${lat},${lon});
   relation["tourism"="hotel"](around:25000,${lat},${lon});
