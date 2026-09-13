@@ -6372,17 +6372,22 @@ marker = L.marker([
         });
 
         L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-    {
-        maxZoom: 19,
-        minZoom: 2,
-        worldCopyJump: true,
-        keepBuffer: 5,
-        updateWhenIdle: false,
-        attribution:
-            '&copy; OpenStreetMap contributors &copy; CARTO'
-    }
-).addTo(map);
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+                minZoom: 2,
+                worldCopyJump: true,
+                keepBuffer: 5,
+                updateWhenIdle: false,
+                attribution:
+                    "&copy; OpenStreetMap contributors"
+            }
+        ).addTo(map);
+
+
+
+
+
 
         map.setView(
             [20, 0],
@@ -7201,15 +7206,19 @@ out center tags;
                         distance,
 
                     name:
-                        tags.name ||
-                        (
-                            type === "airport"
-                                ? "Nearest Airport"
-                                : type === "hotel"
-                                    ? "Nearest Hotel"
-                                    : "Nearest Hospital"
-                        )
-
+    safeText(
+        tags["name:en"] ||
+        tags["int_name"] ||
+        tags["official_name:en"] ||
+        tags.name
+    ) ||
+    (
+        type === "airport"
+            ? "Nearest International Airport"
+            : type === "hotel"
+                ? "Nearest Hotel"
+                : "Nearest Hospital"
+    )
                 };
 
             }
