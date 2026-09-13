@@ -6334,6 +6334,13 @@ loadUniversities();
          * Remove only existing tile layers.
          * University/POI markers remain untouched.
          */
+               /*
+         * Remove the original university/location marker
+         * and existing tile layers.
+         *
+         * The new 🎓 marker and nearby POIs are kept inside
+         * nearbyLayer and therefore are not affected.
+         */
         map.eachLayer(function (layer) {
 
             if (
@@ -6345,10 +6352,22 @@ loadUniversities();
                 }
                 catch (e) {}
 
+                return;
+            }
+
+
+            if (
+                layer instanceof L.Marker
+            ) {
+
+                try {
+                    map.removeLayer(layer);
+                }
+                catch (e) {}
+
             }
 
         });
-
 
         L.tileLayer(
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
