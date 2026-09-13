@@ -7244,7 +7244,7 @@ out center tags;
         }
 
 
-        /*
+               /*
          * University marker.
          */
         const universityMarker =
@@ -7262,38 +7262,10 @@ out center tags;
             );
 
 
-
-       
-
         const universityName =
             safeText(
                 university.name
             );
-         
-
-
-         universityMarker.bindPopup(
-
-            "<strong>🎓 " +
-            htmlEscape(
-                universityName
-            ) +
-            "</strong>" +
-
-            (
-                universityAddress
-                    ? "<br><br>" +
-                      htmlEscape(
-                          universityAddress
-                      )
-                    : ""
-            )
-
-        );
-
-           
-
-
 
 
         let universityAddress = "";
@@ -7318,8 +7290,24 @@ out center tags;
         catch (e) {}
 
 
-       
+        universityMarker.bindPopup(
 
+            "<strong>🎓 " +
+            htmlEscape(
+                universityName
+            ) +
+            "</strong>" +
+
+            (
+                universityAddress
+                    ? "<br><br>" +
+                      htmlEscape(
+                          universityAddress
+                      )
+                    : ""
+            )
+
+        );
         map.setView(
             [lat, lon],
             14,
