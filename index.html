@@ -3590,7 +3590,7 @@ function showMap(
     }
 
 
-    /*
+    
 marker =
     L.marker(
         [lat,lon]
@@ -3598,7 +3598,7 @@ marker =
     .addTo(
         map
     );
-*/
+
 
     const databaseAddress =
         getAddress(
@@ -4873,11 +4873,12 @@ loadUniversities();
              * Put the marker ONLY at the coordinates returned
              * for the exact JSON address.
              */
-            marker = L.marker([
-                latitude,
-                longitude
-            ]).addTo(map);
-
+            /*
+marker = L.marker([
+    latitude,
+    longitude
+]).addTo(map);
+*/
             /*
              * Show the EXACT original JSON address.
              * Nothing returned by Nominatim replaces it.
