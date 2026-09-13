@@ -6910,10 +6910,18 @@ loadUniversities();
 [out:json][timeout:25];
 (
     
+  node["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
+  way["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
+  relation["aeroway"="aerodrome"]["iata"](around:50000,${lat},${lon});
+
+  node["aeroway"="aerodrome"]["icao"](around:50000,${lat},${lon});
+  way["aeroway"="aerodrome"]["icao"](around:50000,${lat},${lon});
+  relation["aeroway"="aerodrome"]["icao"](around:50000,${lat},${lon});
+
   node["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
   way["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
-  relation["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
-  
+  relation["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon]);
+
   node["tourism"="hotel"](around:25000,${lat},${lon});
   way["tourism"="hotel"](around:25000,${lat},${lon});
   relation["tourism"="hotel"](around:25000,${lat},${lon});
@@ -6924,8 +6932,6 @@ loadUniversities();
 );
 out center tags;
 `;
-
-
         const servers = [
 
             "https://overpass-api.de/api/interpreter",
