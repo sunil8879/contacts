@@ -6909,10 +6909,11 @@ loadUniversities();
         const query = `
 [out:json][timeout:25];
 (
-  node["aeroway"="aerodrome"](around:50000,${lat},${lon});
-  way["aeroway"="aerodrome"](around:50000,${lat},${lon});
-  relation["aeroway"="aerodrome"](around:50000,${lat},${lon});
-
+    
+  node["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
+  way["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
+  relation["aeroway"="aerodrome"]["international"="yes"](around:50000,${lat},${lon});
+  
   node["tourism"="hotel"](around:25000,${lat},${lon});
   way["tourism"="hotel"](around:25000,${lat},${lon});
   relation["tourism"="hotel"](around:25000,${lat},${lon});
