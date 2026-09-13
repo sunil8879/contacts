@@ -6250,5 +6250,1844 @@ loadUniversities();
 })();
 </script>
 
+
+
+<script>
+/* ============================================================
+   FINAL UNIVERSITY MAP + IMAGE ENHANCEMENT
+   ------------------------------------------------------------
+   ADD ONLY BEFORE </body>
+   
+   FEATURES:
+   1. More reliable university location detection
+   2. Uses exact JSON address/name/country
+   3. Proper worldwide map
+   4. University marker
+   5. Nearest AIRPORT
+   6. Nearest HOTEL
+   7. Nearest HOSPITAL
+   8. Colour-coded map markers
+   9. Reliable university-only photograph
+   10. Prevents unrelated/random images
+============================================================ */
+
+(function () {
+
+    "use strict";
+
+    let nearbyLayer = null;
+    let universityMapRequest = 0;
+    let imageRequest = 0;
+
+
+    /* =========================================================
+       SAFE TEXT
+    ========================================================= */
+
+    function safeText(value) {
+
+        return String(value || "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+    }
+
+
+    function normalise(value) {
+
+        return safeText(value)
+            .toLowerCase()
+            .replace(/[.,'’"()\-_/]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+    }
+
+
+    function htmlEscape(value) {
+
+        return safeText(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =========================================================
+       BETTER WORLD MAP
+    ========================================================= */
+
+    function improveBaseMap() {
+
+        if (
+            typeof map === "undefined" ||
+            !map
+        ) {
+            return;
+        }
+
+
+        /*
+         * Remove only existing tile layers.
+         * University/POI markers remain untouched.
+         */
+        map.eachLayer(function (layer) {
+
+            if (
+                layer instanceof L.TileLayer
+            ) {
+
+                try {
+                    map.removeLayer(layer);
+                }
+                catch (e) {}
+
+            }
+
+        });
+
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+                minZoom: 2,
+                worldCopyJump: true,
+                keepBuffer: 5,
+                updateWhenIdle: false,
+                attribution:
+                    "&copy; OpenStreetMap contributors"
+            }
+        ).addTo(map);
+
+
+        map.setView(
+            [20, 0],
+            2
+        );
+
+    }
+
+
+    /* =========================================================
+       DIRECT COORDINATES FROM UNIVERSITY JSON
+    ========================================================= */
+
+    function getUniversityCoordinates(university) {
+
+        if (!university) {
+            return null;
+        }
+
+
+        const latFields = [
+            "latitude",
+            "lat",
+            "Latitude",
+            "LATITUDE",
+            "LAT"
+        ];
+
+
+        const lonFields = [
+            "longitude",
+            "lon",
+            "lng",
+            "Longitude",
+            "LONGITUDE",
+            "LON"
+        ];
+
+
+        let lat = null;
+        let lon = null;
+
+
+        for (
+            const field of latFields
+        ) {
+
+            if (
+                university[field] !== undefined &&
+                university[field] !== null &&
+                safeText(
+                    university[field]
+                ) !== ""
+            ) {
+
+                const n =
+                    parseFloat(
+                        university[field]
+                    );
+
+                if (
+                    Number.isFinite(n) &&
+                    n >= -90 &&
+                    n <= 90
+                ) {
+
+                    lat = n;
+                    break;
+
+                }
+
+            }
+
+        }
+
+
+        for (
+            const field of lonFields
+        ) {
+
+            if (
+                university[field] !== undefined &&
+                university[field] !== null &&
+                safeText(
+                    university[field]
+                ) !== ""
+            ) {
+
+                const n =
+                    parseFloat(
+                        university[field]
+                    );
+
+                if (
+                    Number.isFinite(n) &&
+                    n >= -180 &&
+                    n <= 180
+                ) {
+
+                    lon = n;
+                    break;
+
+                }
+
+            }
+
+        }
+
+
+        if (
+            Number.isFinite(lat) &&
+            Number.isFinite(lon)
+        ) {
+
+            return {
+                lat: lat,
+                lon: lon
+            };
+
+        }
+
+
+        return null;
+
+    }
+
+
+    /* =========================================================
+       COUNTRY CHECK
+    ========================================================= */
+
+    function countryMatches(
+        result,
+        expectedCountry
+    ) {
+
+        if (
+            !expectedCountry ||
+            !result ||
+            !result.address ||
+            !result.address.country
+        ) {
+            return true;
+        }
+
+
+        const expected =
+            normalise(
+                expectedCountry
+            );
+
+
+        const returned =
+            normalise(
+                result.address.country
+            );
+
+
+        const aliases = {
+
+            "usa": "united states",
+            "us": "united states",
+            "united states of america":
+                "united states",
+
+            "uk": "united kingdom",
+            "great britain":
+                "united kingdom",
+            "england":
+                "united kingdom",
+
+            "uae":
+                "united arab emirates",
+
+            "czech republic":
+                "czechia"
+
+        };
+
+
+        const e =
+            aliases[expected] ||
+            expected;
+
+
+        const r =
+            aliases[returned] ||
+            returned;
+
+
+        return (
+            r === e ||
+            r.includes(e) ||
+            e.includes(r)
+        );
+
+    }
+
+
+    /* =========================================================
+       RELIABLE NOMINATIM SEARCH
+    ========================================================= */
+
+    async function reliableGeocode(
+        university,
+        requestId
+    ) {
+
+        const name =
+            safeText(
+                university.name
+            );
+
+
+        const address =
+            safeText(
+                university.address ||
+                university.fullAddress ||
+                university.location ||
+                ""
+            );
+
+
+        let country = "";
+
+        try {
+
+            if (
+                typeof getCountry ===
+                "function"
+            ) {
+
+                country =
+                    safeText(
+                        getCountry(
+                            university
+                        )
+                    );
+
+            }
+
+        }
+        catch (e) {}
+
+
+        const city =
+            safeText(
+                university.city
+            );
+
+
+        const queries = [
+
+            name +
+            (address
+                ? ", " + address
+                : "") +
+            (country
+                ? ", " + country
+                : ""),
+
+            name +
+            (city
+                ? ", " + city
+                : "") +
+            (country
+                ? ", " + country
+                : ""),
+
+            name +
+            (country
+                ? ", " + country
+                : ""),
+
+            address +
+            (country
+                ? ", " + country
+                : "")
+
+        ];
+
+
+        const uniqueQueries =
+            [
+                ...new Set(
+                    queries
+                        .map(
+                            q => safeText(q)
+                        )
+                        .filter(Boolean)
+                )
+            ];
+
+
+        for (
+            const query
+            of uniqueQueries
+        ) {
+
+            if (
+                requestId !==
+                universityMapRequest
+            ) {
+                return null;
+            }
+
+
+            try {
+
+                const url =
+                    "https://nominatim.openstreetmap.org/search" +
+                    "?format=jsonv2" +
+                    "&addressdetails=1" +
+                    "&limit=5" +
+                    "&accept-language=en" +
+                    "&q=" +
+                    encodeURIComponent(query);
+
+
+                const response =
+                    await fetch(
+                        url
+                    );
+
+
+                if (
+                    !response.ok
+                ) {
+                    continue;
+                }
+
+
+                const results =
+                    await response.json();
+
+
+                if (
+                    !Array.isArray(results)
+                ) {
+                    continue;
+                }
+
+
+                /*
+                 * Find the best result in the CORRECT country.
+                 */
+                for (
+                    const result
+                    of results
+                ) {
+
+                    if (
+                        !result.lat ||
+                        !result.lon
+                    ) {
+                        continue;
+                    }
+
+
+                    if (
+                        !countryMatches(
+                            result,
+                            country
+                        )
+                    ) {
+                        continue;
+                    }
+
+
+                    return {
+
+                        lat:
+                            parseFloat(
+                                result.lat
+                            ),
+
+                        lon:
+                            parseFloat(
+                                result.lon
+                            ),
+
+                        display:
+                            result.display_name ||
+                            query
+
+                    };
+
+                }
+
+            }
+            catch (error) {
+
+                console.warn(
+                    "Geocoding error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        return null;
+
+    }
+
+
+    /* =========================================================
+       HAVERSINE DISTANCE
+    ========================================================= */
+
+    function distanceKm(
+        lat1,
+        lon1,
+        lat2,
+        lon2
+    ) {
+
+        const R = 6371;
+
+        const dLat =
+            (
+                (lat2 - lat1) *
+                Math.PI
+            ) / 180;
+
+        const dLon =
+            (
+                (lon2 - lon1) *
+                Math.PI
+            ) / 180;
+
+
+        const a =
+            Math.sin(dLat / 2) *
+            Math.sin(dLat / 2) +
+
+            Math.cos(
+                lat1 * Math.PI / 180
+            ) *
+            Math.cos(
+                lat2 * Math.PI / 180
+            ) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+
+
+        return (
+            R *
+            2 *
+            Math.atan2(
+                Math.sqrt(a),
+                Math.sqrt(1 - a)
+            )
+        );
+
+    }
+
+
+    /* =========================================================
+       MAP MARKER ICONS
+    ========================================================= */
+
+    function makePOIIcon(
+        emoji,
+        background
+    ) {
+
+        return L.divIcon({
+
+            className:
+                "university-poi-icon",
+
+            html:
+                '<div style="' +
+                'width:38px;' +
+                'height:38px;' +
+                'border-radius:50%;' +
+                'background:' +
+                background +
+                ';' +
+                'border:3px solid white;' +
+                'box-shadow:0 3px 10px rgba(0,0,0,.45);' +
+                'display:flex;' +
+                'align-items:center;' +
+                'justify-content:center;' +
+                'font-size:20px;' +
+                '">' +
+                emoji +
+                "</div>",
+
+            iconSize:
+                [38, 38],
+
+            iconAnchor:
+                [19, 19],
+
+            popupAnchor:
+                [0, -20]
+
+        });
+
+    }
+
+
+    const airportIcon =
+        makePOIIcon(
+            "✈️",
+            "#1976d2"
+        );
+
+
+    const hotelIcon =
+        makePOIIcon(
+            "🏨",
+            "#9c27b0"
+        );
+
+
+    const hospitalIcon =
+        makePOIIcon(
+            "🏥",
+            "#d32f2f"
+        );
+
+
+    const universityIcon =
+        makePOIIcon(
+            "🎓",
+            "#00897b"
+        );
+
+
+    /* =========================================================
+       OVERPASS - FIND NEAREST AIRPORT/HOTEL/HOSPITAL
+    ========================================================= */
+
+    async function findNearbyPlaces(
+        lat,
+        lon,
+        requestId
+    ) {
+
+        const query = `
+[out:json][timeout:25];
+(
+  node["aeroway"="aerodrome"](around:50000,${lat},${lon});
+  way["aeroway"="aerodrome"](around:50000,${lat},${lon});
+  relation["aeroway"="aerodrome"](around:50000,${lat},${lon});
+
+  node["tourism"="hotel"](around:25000,${lat},${lon});
+  way["tourism"="hotel"](around:25000,${lat},${lon});
+  relation["tourism"="hotel"](around:25000,${lat},${lon});
+
+  node["amenity"="hospital"](around:25000,${lat},${lon});
+  way["amenity"="hospital"](around:25000,${lat},${lon});
+  relation["amenity"="hospital"](around:25000,${lat},${lon});
+);
+out center tags;
+`;
+
+
+        const servers = [
+
+            "https://overpass-api.de/api/interpreter",
+
+            "https://overpass.kumi.systems/api/interpreter"
+
+        ];
+
+
+        for (
+            const server
+            of servers
+        ) {
+
+            if (
+                requestId !==
+                universityMapRequest
+            ) {
+                return null;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        server,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type":
+                                    "text/plain"
+                            },
+                            body: query
+                        }
+                    );
+
+
+                if (
+                    !response.ok
+                ) {
+                    continue;
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    data &&
+                    Array.isArray(
+                        data.elements
+                    )
+                ) {
+
+                    return data.elements;
+
+                }
+
+            }
+            catch (error) {
+
+                console.warn(
+                    "Nearby places search:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        return [];
+
+    }
+
+
+    /* =========================================================
+       GET ELEMENT COORDINATES
+    ========================================================= */
+
+    function elementCoordinates(
+        element
+    ) {
+
+        if (
+            Number.isFinite(
+                parseFloat(
+                    element.lat
+                )
+            ) &&
+            Number.isFinite(
+                parseFloat(
+                    element.lon
+                )
+            )
+        ) {
+
+            return {
+
+                lat:
+                    parseFloat(
+                        element.lat
+                    ),
+
+                lon:
+                    parseFloat(
+                        element.lon
+                    )
+
+            };
+
+        }
+
+
+        if (
+            element.center
+        ) {
+
+            return {
+
+                lat:
+                    parseFloat(
+                        element.center.lat
+                    ),
+
+                lon:
+                    parseFloat(
+                        element.center.lon
+                    )
+
+            };
+
+        }
+
+
+        return null;
+
+    }
+
+
+    /* =========================================================
+       SELECT NEAREST PLACE OF EACH TYPE
+    ========================================================= */
+
+    function selectNearest(
+        elements,
+        lat,
+        lon
+    ) {
+
+        const best = {
+
+            airport: null,
+            hotel: null,
+            hospital: null
+
+        };
+
+
+        for (
+            const element
+            of elements
+        ) {
+
+            const coords =
+                elementCoordinates(
+                    element
+                );
+
+
+            if (!coords) {
+                continue;
+            }
+
+
+            const tags =
+                element.tags ||
+                {};
+
+
+            const distance =
+                distanceKm(
+                    lat,
+                    lon,
+                    coords.lat,
+                    coords.lon
+                );
+
+
+            let type = null;
+
+
+            if (
+                tags.aeroway ===
+                "aerodrome"
+            ) {
+
+                type = "airport";
+
+            }
+            else if (
+                tags.tourism ===
+                "hotel"
+            ) {
+
+                type = "hotel";
+
+            }
+            else if (
+                tags.amenity ===
+                "hospital"
+            ) {
+
+                type = "hospital";
+
+            }
+
+
+            if (!type) {
+                continue;
+            }
+
+
+            if (
+                !best[type] ||
+                distance <
+                best[type].distance
+            ) {
+
+                best[type] = {
+
+                    lat:
+                        coords.lat,
+
+                    lon:
+                        coords.lon,
+
+                    distance:
+                        distance,
+
+                    name:
+                        tags.name ||
+                        (
+                            type === "airport"
+                                ? "Nearest Airport"
+                                : type === "hotel"
+                                    ? "Nearest Hotel"
+                                    : "Nearest Hospital"
+                        )
+
+                };
+
+            }
+
+        }
+
+
+        return best;
+
+    }
+
+
+    /* =========================================================
+       DRAW UNIVERSITY + NEARBY PLACES
+    ========================================================= */
+
+    async function drawUniversityMap(
+        lat,
+        lon,
+        university,
+        requestId
+    ) {
+
+        if (
+            !map ||
+            requestId !==
+            universityMapRequest
+        ) {
+            return;
+        }
+
+
+        /*
+         * Remove old nearby markers.
+         */
+        if (
+            nearbyLayer
+        ) {
+
+            try {
+                nearbyLayer.clearLayers();
+            }
+            catch (e) {}
+
+        }
+        else {
+
+            nearbyLayer =
+                L.layerGroup()
+                    .addTo(map);
+
+        }
+
+
+        /*
+         * University marker.
+         */
+        const universityMarker =
+            L.marker(
+                [lat, lon],
+                {
+                    icon:
+                        universityIcon,
+                    zIndexOffset:
+                        1000
+                }
+            )
+            .addTo(
+                nearbyLayer
+            );
+
+
+        const universityName =
+            safeText(
+                university.name
+            );
+
+
+        let universityAddress = "";
+
+        try {
+
+            if (
+                typeof getAddress ===
+                "function"
+            ) {
+
+                universityAddress =
+                    safeText(
+                        getAddress(
+                            university
+                        )
+                    );
+
+            }
+
+        }
+        catch (e) {}
+
+
+        universityMarker.bindPopup(
+
+            "<strong>🎓 " +
+            htmlEscape(
+                universityName
+            ) +
+            "</strong>" +
+
+            (
+                universityAddress
+                    ? "<br><br>" +
+                      htmlEscape(
+                          universityAddress
+                      )
+                    : ""
+            )
+
+        );
+
+
+        map.setView(
+            [lat, lon],
+            14,
+            {
+                animate: true,
+                duration: 1
+            }
+        );
+
+
+        /*
+         * Find airport/hotel/hospital.
+         */
+        const elements =
+            await findNearbyPlaces(
+                lat,
+                lon,
+                requestId
+            );
+
+
+        if (
+            requestId !==
+            universityMapRequest
+        ) {
+            return;
+        }
+
+
+        const nearest =
+            selectNearest(
+                elements || [],
+                lat,
+                lon
+            );
+
+
+        function addPOI(
+            item,
+            icon,
+            title
+        ) {
+
+            if (!item) {
+                return;
+            }
+
+
+            const marker =
+                L.marker(
+                    [
+                        item.lat,
+                        item.lon
+                    ],
+                    {
+                        icon: icon,
+                        zIndexOffset: 500
+                    }
+                )
+                .addTo(
+                    nearbyLayer
+                );
+
+
+            marker.bindPopup(
+
+                "<strong>" +
+                title +
+                "</strong>" +
+
+                "<br><br>" +
+
+                "<strong>" +
+                htmlEscape(
+                    item.name
+                ) +
+                "</strong>" +
+
+                "<br>" +
+
+                item.distance
+                    .toFixed(1) +
+                " km from university"
+
+            );
+
+        }
+
+
+        addPOI(
+            nearest.airport,
+            airportIcon,
+            "✈️ NEAREST AIRPORT"
+        );
+
+
+        addPOI(
+            nearest.hotel,
+            hotelIcon,
+            "🏨 NEAREST HOTEL"
+        );
+
+
+        addPOI(
+            nearest.hospital,
+            hospitalIcon,
+            "🏥 NEAREST HOSPITAL"
+        );
+
+
+        /*
+         * Fit map so university and nearby facilities
+         * are all visible.
+         */
+        const bounds =
+            L.latLngBounds(
+                [[lat, lon]]
+            );
+
+
+        [
+            nearest.airport,
+            nearest.hotel,
+            nearest.hospital
+        ]
+        .filter(Boolean)
+        .forEach(function (item) {
+
+            bounds.extend(
+                [
+                    item.lat,
+                    item.lon
+                ]
+            );
+
+        });
+
+
+        if (
+            bounds.isValid()
+        ) {
+
+            map.fitBounds(
+                bounds,
+                {
+                    padding:
+                        [45, 45],
+                    maxZoom:
+                        14,
+                    animate:
+                        true
+                }
+            );
+
+        }
+
+
+        const status =
+            document.getElementById(
+                "mapStatus"
+            );
+
+
+        if (status) {
+
+            status.innerHTML =
+                "🎓 University&nbsp;&nbsp; " +
+                "✈️ Airport&nbsp;&nbsp; " +
+                "🏨 Hotel&nbsp;&nbsp; " +
+                "🏥 Hospital";
+
+        }
+
+    }
+
+
+    /* =========================================================
+       OVERRIDE UNIVERSITY LOCATION
+    ========================================================= */
+
+    window.locateUniversity =
+    async function (
+        university
+    ) {
+
+        if (!university) {
+            return;
+        }
+
+
+        const requestId =
+            ++universityMapRequest;
+
+
+        if (
+            typeof initialiseMap ===
+            "function"
+        ) {
+
+            initialiseMap();
+
+        }
+
+
+        improveBaseMap();
+
+
+        const status =
+            document.getElementById(
+                "mapStatus"
+            );
+
+
+        if (status) {
+
+            status.textContent =
+                "Locating university...";
+
+        }
+
+
+        /*
+         * STEP 1:
+         * Use coordinates already present in JSON.
+         */
+        let coords =
+            getUniversityCoordinates(
+                university
+            );
+
+
+        /*
+         * STEP 2:
+         * Use exact address/name/country.
+         */
+        if (!coords) {
+
+            const result =
+                await reliableGeocode(
+                    university,
+                    requestId
+                );
+
+
+            if (
+                result
+            ) {
+
+                coords = {
+
+                    lat:
+                        result.lat,
+
+                    lon:
+                        result.lon
+
+                };
+
+            }
+
+        }
+
+
+        if (
+            requestId !==
+            universityMapRequest
+        ) {
+            return;
+        }
+
+
+        if (!coords) {
+
+            if (status) {
+
+                status.textContent =
+                    "University location could not be identified.";
+
+            }
+
+            return;
+
+        }
+
+
+        await drawUniversityMap(
+            coords.lat,
+            coords.lon,
+            university,
+            requestId
+        );
+
+    };
+
+
+    /* =========================================================
+       IMAGE SEARCH
+       ---------------------------------------------------------
+       First attempts the university's actual Wikipedia page.
+       If unavailable, uses Bing's university-campus image
+       search exactly like the working project supplied.
+    ========================================================= */
+
+    async function getWikipediaUniversityImage(
+        universityName,
+        requestId
+    ) {
+
+        try {
+
+            const exactURL =
+                "https://en.wikipedia.org/api/rest_v1/page/summary/" +
+                encodeURIComponent(
+                    universityName
+                        .trim()
+                        .replace(/\s+/g, "_")
+                );
+
+
+            const response =
+                await fetch(
+                    exactURL
+                );
+
+
+            if (
+                response.ok
+            ) {
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    requestId !==
+                    imageRequest
+                ) {
+                    return null;
+                }
+
+
+                if (
+                    data &&
+                    data.originalimage &&
+                    data.originalimage.source
+                ) {
+
+                    return data.originalimage.source;
+
+                }
+
+            }
+
+        }
+        catch (error) {
+
+            console.warn(
+                "Wikipedia image:",
+                error
+            );
+
+        }
+
+
+        return null;
+
+    }
+
+
+    function verifyImage(
+        url
+    ) {
+
+        return new Promise(
+            function (resolve) {
+
+                const test =
+                    new Image();
+
+                let completed =
+                    false;
+
+
+                function finish(
+                    result
+                ) {
+
+                    if (
+                        completed
+                    ) {
+                        return;
+                    }
+
+                    completed = true;
+
+                    resolve(
+                        result
+                    );
+
+                }
+
+
+                test.onload =
+                    function () {
+
+                        if (
+                            this.naturalWidth >=
+                            400 &&
+                            this.naturalHeight >=
+                            250
+                        ) {
+
+                            finish(true);
+
+                        }
+                        else {
+
+                            finish(false);
+
+                        }
+
+                    };
+
+
+                test.onerror =
+                    function () {
+
+                        finish(false);
+
+                    };
+
+
+                setTimeout(
+                    function () {
+
+                        finish(false);
+
+                    },
+                    7000
+                );
+
+
+                test.src =
+                    url;
+
+            }
+        );
+
+    }
+
+
+    function showImage(
+        url,
+        universityName,
+        requestId
+    ) {
+
+        if (
+            requestId !==
+            imageRequest
+        ) {
+            return;
+        }
+
+
+        const image =
+            document.getElementById(
+                "universityImage"
+            );
+
+
+        const placeholder =
+            document.getElementById(
+                "imagePlaceholder"
+            );
+
+
+        if (
+            !image ||
+            !placeholder
+        ) {
+            return;
+        }
+
+
+        image.onload =
+            function () {
+
+                if (
+                    requestId !==
+                    imageRequest
+                ) {
+                    return;
+                }
+
+
+                image.style.display =
+                    "block";
+
+                placeholder.style.display =
+                    "none";
+
+            };
+
+
+        image.onerror =
+            function () {
+
+                image.removeAttribute(
+                    "src"
+                );
+
+                image.style.display =
+                    "none";
+
+                placeholder.style.display =
+                    "block";
+
+            };
+
+
+        image.alt =
+            universityName +
+            " university campus";
+
+
+        image.src =
+            url;
+
+    }
+
+
+    /* =========================================================
+       OVERRIDE IMAGE FUNCTION
+    ========================================================= */
+
+    window.findUniversityImage =
+    async function (
+        university
+    ) {
+
+        const requestId =
+            ++imageRequest;
+
+
+        const image =
+            document.getElementById(
+                "universityImage"
+            );
+
+
+        const placeholder =
+            document.getElementById(
+                "imagePlaceholder"
+            );
+
+
+        if (
+            image
+        ) {
+
+            image.onload = null;
+            image.onerror = null;
+
+            image.removeAttribute(
+                "src"
+            );
+
+            image.style.display =
+                "none";
+
+        }
+
+
+        if (
+            placeholder
+        ) {
+
+            placeholder.style.display =
+                "block";
+
+        }
+
+
+        if (
+            !university
+        ) {
+            return;
+        }
+
+
+        const name =
+            safeText(
+                university.name
+            );
+
+
+        if (!name) {
+            return;
+        }
+
+
+        /*
+         * 1. Try the university's actual Wikipedia
+         *    article image.
+         */
+        let photo =
+            await getWikipediaUniversityImage(
+                name,
+                requestId
+            );
+
+
+        if (
+            requestId !==
+            imageRequest
+        ) {
+            return;
+        }
+
+
+        if (
+            photo &&
+            await verifyImage(photo)
+        ) {
+
+            showImage(
+                photo,
+                name,
+                requestId
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * 2. Bing image result.
+         *
+         * IMPORTANT:
+         * Search is explicitly for:
+         * UNIVERSITY NAME + UNIVERSITY CAMPUS
+         *
+         * This is the same approach used in the
+         * working project supplied by you.
+         */
+        const bingPhoto =
+            "https://tse1.mm.bing.net/th?" +
+            "q=" +
+            encodeURIComponent(
+                name +
+                " university campus"
+            ) +
+            "&w=1200" +
+            "&h=600" +
+            "&c=7" +
+            "&rs=1" +
+            "&p=0" +
+            "&o=5" +
+            "&pid=1.7";
+
+
+        if (
+            await verifyImage(
+                bingPhoto
+            )
+        ) {
+
+            showImage(
+                bingPhoto,
+                name,
+                requestId
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * No reliable image:
+         * keep the normal placeholder.
+         */
+        if (
+            image
+        ) {
+
+            image.removeAttribute(
+                "src"
+            );
+
+            image.style.display =
+                "none";
+
+        }
+
+
+        if (
+            placeholder
+        ) {
+
+            placeholder.style.display =
+                "block";
+
+        }
+
+    };
+
+
+    /* =========================================================
+       INITIALISE AFTER EXISTING PAGE CODE
+    ========================================================= */
+
+    function startFinalEnhancement() {
+
+        if (
+            typeof L === "undefined"
+        ) {
+
+            setTimeout(
+                startFinalEnhancement,
+                500
+            );
+
+            return;
+
+        }
+
+
+        if (
+            typeof map ===
+            "undefined" ||
+            !map
+        ) {
+
+            setTimeout(
+                startFinalEnhancement,
+                500
+            );
+
+            return;
+
+        }
+
+
+        improveBaseMap();
+
+
+        /*
+         * If a university is already selected,
+         * refresh its map immediately.
+         */
+        if (
+            typeof selectedUniversity !==
+            "undefined" &&
+            selectedUniversity
+        ) {
+
+            setTimeout(
+                function () {
+
+                    window.locateUniversity(
+                        selectedUniversity
+                    );
+
+                },
+                300
+            );
+
+        }
+
+    }
+
+
+    /*
+     * Give the original application enough time to
+     * finish loading its database and map.
+     */
+    setTimeout(
+        startFinalEnhancement,
+        1200
+    );
+
+
+    console.log(
+        "FINAL UNIVERSITY MAP + IMAGE ENHANCEMENT ACTIVE"
+    );
+
+})();
+</script>
+
 </body>
 </html>
